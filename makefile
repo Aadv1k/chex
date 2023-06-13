@@ -10,9 +10,7 @@ chex/main: $(chex_files)
 chex/board: ./src/board.cpp ./src/board.hpp
 	$(CMD) ./src/board.cpp
 
-all: main
+format:
+	clang-format -i ./src/*
 
-.PHONY: pre-build
-
-pre-build:
-	mkdir bin
+all: chex/main
