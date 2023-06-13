@@ -6,22 +6,11 @@
 
 namespace chex {
 
-enum PieceType {
-  WHITE_PAWN,
-  WHITE_BISHOP,
-  WHITE_KING,
-  WHITE_QUEEN,
-  WHITE_KNIGHT,
-  WHITE_ROOK,
+enum PieceType { PAWN, BISHOP, KING, QUEEN, KNIGHT, ROOK, NONE };
 
-  BLACK_PAWN,
-  BLACK_BISHOP,
-  BLACK_KING,
-  BLACK_QUEEN,
-  BLACK_KNIGHT,
-  BLACK_ROOK,
-  NONE,
-};
+enum PieceColor { BLACK, WHITE };
+
+enum MoveValidity { OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove };
 
 enum CellState { EMPTY, FILLED };
 
@@ -32,6 +21,7 @@ typedef struct {
 
 typedef struct {
   PieceType type;
+  PieceColor color;
   Vec2i position;
 } ChessPiece;
 
@@ -49,12 +39,17 @@ typedef struct {
 } Cell;
 
 class Board {
+private:
   static const int boardSize = 8;
   Board();
-  void initFromNotation(std::string notation);
+
+  MoveValidity isPawnMoveValid(ChessMove *move);
 
 private:
   Cell board[boardSize][boardSize];
+  bool isMoveWithinBounds(Vec2i *position);
 };
+
 } // namespace chex
+
 #endif
