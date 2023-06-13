@@ -10,7 +10,9 @@ enum PieceType { PAWN, BISHOP, KING, QUEEN, KNIGHT, ROOK, NONE };
 
 enum PieceColor { BLACK, WHITE };
 
-enum MoveValidity { OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove };
+enum MoveValidity {
+  OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove, Betrayal
+};
 
 enum CellState { EMPTY, FILLED };
 
@@ -30,7 +32,7 @@ typedef struct {
   Vec2i to;
   ChessPiece *capturedPiece;
   ChessPiece *currentPiece;
-  bool isPromotion;
+  // bool isPromotion; // TODO: implement logic for piece promotion
 } ChessMove;
 
 typedef struct {
@@ -39,11 +41,12 @@ typedef struct {
 } Cell;
 
 class Board {
-private:
+public:
   static const int boardSize = 8;
   Board();
 
   MoveValidity isPawnMoveValid(ChessMove *move);
+  MoveValidity isRookMoveValid(ChessMove *move);
 
 private:
   Cell board[boardSize][boardSize];

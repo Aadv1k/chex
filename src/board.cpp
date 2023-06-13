@@ -10,9 +10,13 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  if (board[fromX][fromY].piece->type != move->currentPiece->type ||
-      board[fromX][fromY].piece->color != move->currentPiece->color) {
+  if (board[fromY][fromX].piece->type != move->currentPiece->type ||
+      board[fromY][fromX].piece->color != move->currentPiece->color) {
     return MoveValidity::PieceMismatch;
+  }
+
+  if (board[toY][toX].piece->color == move->currentPiece->color) {
+    return MoveValidity::Betrayal 
   }
 
   switch (move->currentPiece->color) {
@@ -31,6 +35,8 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
 
   return MoveValidity::LegalMove;
 }
+
+MoveValidity Board::isRookMoveValid(ChessMove *move) { /* TODO */ }
 
 Board::Board() {
   for (int i = 0; i < boardSize; i++) {
