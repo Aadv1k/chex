@@ -1,7 +1,10 @@
 #include "./board.hpp"
+#include "../utils/utils.hpp"
 #include <iostream>
 
 int main() {
-  std::cout << "Hello world!" << std::endl;
+
+  auto tokens = chex::splitString("foo,bar,baz", ',');
+  std::cout << tokens[0] << std::endl;
   return 0;
 }
