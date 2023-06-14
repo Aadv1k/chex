@@ -45,6 +45,7 @@ public:
 
   MoveValidity isPawnMoveValid(ChessMove *move);
   MoveValidity isRookMoveValid(ChessMove *move);
+  MoveValidity isBishopMoveValid(ChessMove *move);
 
 private:
   Cell board[boardSize][boardSize];
