@@ -50,6 +50,7 @@ public:
   MoveValidity isBishopMoveValid(ChessMove *move);
   MoveValidity isKnightMoveValid(ChessMove *move);
   MoveValidity isQueenMoveValid(ChessMove *move);
+  MoveValidity isKingMoveValid(ChessMove *move);
 
   void print();
 

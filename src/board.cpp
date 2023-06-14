@@ -146,6 +146,25 @@ MoveValidity Board::isQueenMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
+MoveValidity Board::isKingMoveValid(ChessMove *move) {
+  if (!isMoveWithinBounds(move))
+    return MoveValidity::OutOfBoundsMove;
+
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const int diffX = toX - fromX;
+  const int diffY = toY - fromY;
+
+  if (!(diffX <= 1) || !(diffX >= -1))
+    return MoveValidity::IllegalMove;
+
+  if (!(diffY <= 1) || !(diffY >= -1))
+    return MoveValidity::IllegalMove;
+
+  return MoveValidity::LegalMove;
+}
+
 void Board::print() {
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
