@@ -10,9 +10,7 @@ enum PieceType { PAWN, BISHOP, KING, QUEEN, KNIGHT, ROOK, NONE };
 
 enum PieceColor { BLACK, WHITE };
 
-enum MoveValidity {
-  OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove, Betrayal
-};
+enum MoveValidity { OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove, Betrayal, BlockedPath };
 
 enum CellState { EMPTY, FILLED };
 
@@ -50,7 +48,7 @@ public:
 
 private:
   Cell board[boardSize][boardSize];
-  bool isMoveWithinBounds(Vec2i *position);
+  bool isMoveWithinBounds(ChessMove *move);
 };
 
 } // namespace chex

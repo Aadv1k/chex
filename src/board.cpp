@@ -4,7 +4,7 @@
 namespace chex {
 
 MoveValidity Board::isPawnMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(&move->to) || !isMoveWithinBounds(&move->from))
+  if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
 
   const int fromX = move->from.x, fromY = move->from.y;
@@ -15,20 +15,19 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
     return MoveValidity::PieceMismatch;
   }
 
-  if (board[toY][toX].piece->color == move->currentPiece->color) {
-    return MoveValidity::Betrayal 
-  }
+  if (board[toY][toX].piece->color == move->currentPiece->color)
+    return MoveValidity::Betrayal
 
-  switch (move->currentPiece->color) {
-  case PieceColor::BLACK:
-    if (toY - fromY != 1)
-      return MoveValidity::IllegalMove;
-    break;
-  case PieceColor::WHITE:
-    if (toY - fromY != -1)
-      return MoveValidity::IllegalMove;
-    break;
-  }
+        switch (move->currentPiece->color) {
+    case PieceColor::BLACK:
+      if (toY - fromY != 1)
+        return MoveValidity::IllegalMove;
+      break;
+    case PieceColor::WHITE:
+      if (toY - fromY != -1)
+        return MoveValidity::IllegalMove;
+      break;
+    }
 
   if (toX - fromX != -1 && toX - fromX != 1)
     return MoveValidity::IllegalMove;
@@ -36,7 +35,34 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-MoveValidity Board::isRookMoveValid(ChessMove *move) { /* TODO */ }
+MoveValidity Board::isRookMoveValid(ChessMove *move) {
+  if (!isMoveWithinBounds(move))
+    return MoveValidity::OutOfBoundsMove;
+
+  const int[fromX, fromY] = move->from;
+  const int[toX, toY] = move->to;
+
+  auto b = Board::board;
+
+  if (toY == fromY && fromX != toX)
+    return MoveValidity::IllegalMove;
+
+  if (move->currentPiece->color == move->capturedPiece->color) {
+    return MoveValidity::Betrayal;
+  }
+
+  const int offset = toY > fromY ? 1 ? -1;
+  int i = fromY;
+
+  while () {
+    if (i == toY)
+      break;
+    if (bp[i][fromX].state == CellState::FILLED)
+      return MoveValidity::BlockedPath;
+    i += offset
+  }
+  return MoveValidity::LegalMove;
+}
 
 Board::Board() {
   for (int i = 0; i < boardSize; i++) {
@@ -76,9 +102,16 @@ Board::Board() {
   }
 }
 
-bool Board::isMoveWithinBounds(Vec2i *position) {
+bool Board::isMoveWithinBounds(ChessMove *move) {
   const int size = boardSize;
-  if (size <= position->x || size <= position->y)
+
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  if (size <= fromX || size <= fromY)
+    return false;
+
+  if (size <= toX || size <= toY)
     return false;
 
   if (position->x < 0 || position->y < 0)
