@@ -3,14 +3,13 @@
 
 namespace chex {
 
-// TODO: test pawn move validity checker  
+// TODO: test pawn move validity checker
 MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
 
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
-
 
   if (board[fromY][fromX].piece->type != move->currentPiece->type ||
       board[fromY][fromX].piece->color != move->currentPiece->color) {
@@ -38,7 +37,7 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-// TODO: test rook move validity checker  
+// TODO: test rook move validity checker
 MoveValidity Board::isRookMoveValid(ChessMove *move) {
   if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
@@ -72,26 +71,25 @@ MoveValidity Board::isRookMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-// TODO: test knight move validity checker  
+// TODO: test knight move validity checker
 MoveValidity Board::isKnightMoveValid(ChessMove *move) {
   if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
 
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
-  
+
   if (board[fromY][fromX].piece->type != move->currentPiece->type ||
       board[fromY][fromX].piece->color != move->currentPiece->color) {
     return MoveValidity::PieceMismatch;
   }
 
-
   if (board[toY][toX].piece->color == move->currentPiece->color) {
     return MoveValidity::Betrayal;
   }
 
-  const int diffX = fromX - toX; 
-  const int diffY = fromY - toY; 
+  const int diffX = fromX - toX;
+  const int diffY = fromY - toY;
 
   if (!(diffX <= 3) || !(diffX <= 0 && diffX >= -3))
     return MoveValidity::IllegalMove;
@@ -102,16 +100,13 @@ MoveValidity Board::isKnightMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-
-// TODO: test bishop move validity checker  
+// TODO: test bishop move validity checker
 MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
 
-
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
-
 
   if (board[fromY][fromX].piece->type != move->currentPiece->type ||
       board[fromY][fromX].piece->color != move->currentPiece->color) {
