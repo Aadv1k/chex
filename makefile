@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -std=c++17
 CC = g++
 CMD := $(CC) $(CFLAGS)
 
