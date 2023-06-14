@@ -17,7 +17,18 @@ chex/utils: ./utils/utils.cpp ./src/utils.hpp
 format:
 	clang-format -i ./src/*
 
-all: clean format chex
+all: clean chex
+
+clean_win32:
+	DEL /Q /F /S .\src\*.o
+	DEL /Q /F /S .\utils\*.o
+	RD /S /Q .\bin
+
+chex_win32: $(chex_files)
+	if not exist "bin" then mkdir bin
+	$(CMD) $(chex_files) -o ./bin/chex.exe
+
+all_win32: clean_win32 chex_win32 
 
 clean: 
 	rm -rf ./src/*.o
