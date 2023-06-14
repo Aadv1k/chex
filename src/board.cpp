@@ -76,13 +76,14 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   }
 
   // TODO: test the logic for bishop move check
-  if (toX - fromX != fromX - toX) return MoveValidity::IllegalMove;
+  if (toX - fromX != fromX - toX)
+    return MoveValidity::IllegalMove;
 
   const int offsetY = toY < fromY ? -1 : 1;
   const int offsetX = toX < fromX ? -1 : 1;
   auto const b = Board::board;
 
-  for (int i = fromY, j = fromX; i != toY && j < toX; i+=offsetY, j+=offsetY) {
+  for (int i = fromY, j = fromX; i != toY && j < toX; i += offsetY, j += offsetY) {
     if (b[i][i].state == CellState::FILLED) {
       return MoveValidity::BlockedPath;
     }
