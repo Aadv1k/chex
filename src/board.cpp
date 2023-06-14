@@ -131,40 +131,95 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
+void Board::print() {
+  for (int i = 0; i < boardSize; i++) {
+    for (int j = 0; j < boardSize; j++) {
+      if (board[i][j].state == CellState::FILLED) {
+        const ChessPiece *piece = board[i][j].piece;
+        std::string pieceSymbol;
+
+        switch (piece->type) {
+        case PieceType::PAWN:
+          pieceSymbol = "p";
+          break;
+        case PieceType::BISHOP:
+          pieceSymbol = "b";
+          break;
+        case PieceType::KING:
+          pieceSymbol = "k";
+          break;
+        case PieceType::QUEEN:
+          pieceSymbol = "q";
+          break;
+        case PieceType::KNIGHT:
+          pieceSymbol = "n";
+          break;
+        case PieceType::ROOK:
+          pieceSymbol = "r";
+          break;
+        default:
+          pieceSymbol = "?";
+          break;
+        }
+
+        if (piece->color == PieceColor::WHITE) {
+          pieceSymbol[0] = std::toupper(pieceSymbol[0]);
+        }
+
+        std::cout << pieceSymbol << " ";
+      } else {
+        std::cout << "- ";
+      }
+    }
+    std::cout << std::endl;
+  }
+}
+
+Board::~Board() {
+  for (int i = 0; i < boardSize; i++) {
+    for (int j = 0; j < boardSize; j++) {
+      delete board[i][j].piece;
+    }
+  }
+}
+
 Board::Board() {
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
-
-      ChessPiece piece = {
+      ChessPiece *piece = new ChessPiece{
           .type = PieceType::NONE, .color = PieceColor::BLACK, .position = {.x = i, .y = j}};
 
-      piece.color = (i == 0) ? PieceColor::BLACK : PieceColor::WHITE;
+      piece->color = (i <= 1) ? PieceColor::BLACK : PieceColor::WHITE;
+
+      if (i == 1 || i == boardSize - 2) {
+        piece->type = PieceType::PAWN;
+      }
 
       if (i == 0 || i == boardSize - 1) {
         switch (j) {
-        case boardSize - 0:
-        case 0:
-          piece.type = PieceType::ROOK;
-          break;
         case boardSize - 1:
-        case 1:
-          piece.type = PieceType::KNIGHT;
+        case 0:
+          piece->type = PieceType::ROOK;
           break;
         case boardSize - 2:
-        case 2:
-          piece.type = PieceType::BISHOP;
-          break;
-        case 3:
-          piece.type = PieceType::QUEEN;
+        case 1:
+          piece->type = PieceType::KNIGHT;
           break;
         case boardSize - 3:
-          piece.type = PieceType::KING;
+        case 2:
+          piece->type = PieceType::BISHOP;
+          break;
+        case 3:
+          piece->type = PieceType::QUEEN;
+          break;
+        case boardSize - 4:
+          piece->type = PieceType::KING;
           break;
         }
       }
 
-      board[i][j].state = (piece.type == PieceType::NONE) ? CellState::EMPTY : CellState::FILLED;
-      board[i][j].piece = &piece;
+      board[i][j].state = (piece->type == PieceType::NONE) ? CellState::EMPTY : CellState::FILLED;
+      board[i][j].piece = piece;
     }
   }
 }

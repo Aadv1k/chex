@@ -4,7 +4,7 @@
 
 int main() {
 
-  auto tokens = chex::splitString("foo,bar,baz", ',');
-  std::cout << tokens[0] << std::endl;
+  chex::Board b;
+  b.print();
   return 0;
 }

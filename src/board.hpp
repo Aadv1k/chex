@@ -1,6 +1,7 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
+#include <iostream>
 #include <stack>
 #include <string>
 
@@ -42,11 +43,13 @@ class Board {
 public:
   static const int boardSize = 8;
   Board();
+  ~Board();
 
   MoveValidity isPawnMoveValid(ChessMove *move);
   MoveValidity isRookMoveValid(ChessMove *move);
   MoveValidity isBishopMoveValid(ChessMove *move);
   MoveValidity isKnightMoveValid(ChessMove *move);
+  void print();
 
 private:
   Cell board[boardSize][boardSize];
