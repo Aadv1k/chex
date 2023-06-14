@@ -49,6 +49,8 @@ public:
   MoveValidity isRookMoveValid(ChessMove *move);
   MoveValidity isBishopMoveValid(ChessMove *move);
   MoveValidity isKnightMoveValid(ChessMove *move);
+  MoveValidity isQueenMoveValid(ChessMove *move);
+
   void print();
 
 private:

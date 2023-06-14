@@ -131,6 +131,21 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
+MoveValidity Board::isQueenMoveValid(ChessMove *move) {
+  const MoveValidity bishopMove = isBishopMoveValid(move);
+  const MoveValidity pawnMove = isPawnMoveValid(move);
+  const MoveValidity rookMove = isRookMoveValid(move);
+
+  if (bishopMove != MoveValidity::LegalMove)
+    return bishopMove;
+  if (pawnMove != MoveValidity::LegalMove)
+    return pawnMove;
+  if (rookMove != MoveValidity::LegalMove)
+    return rookMove;
+
+  return MoveValidity::LegalMove;
+}
+
 void Board::print() {
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
@@ -175,14 +190,6 @@ void Board::print() {
   }
 }
 
-Board::~Board() {
-  for (int i = 0; i < boardSize; i++) {
-    for (int j = 0; j < boardSize; j++) {
-      delete board[i][j].piece;
-    }
-  }
-}
-
 Board::Board() {
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
@@ -220,6 +227,14 @@ Board::Board() {
 
       board[i][j].state = (piece->type == PieceType::NONE) ? CellState::EMPTY : CellState::FILLED;
       board[i][j].piece = piece;
+    }
+  }
+}
+
+Board::~Board() {
+  for (int i = 0; i < boardSize; i++) {
+    for (int j = 0; j < boardSize; j++) {
+      delete board[i][j].piece;
     }
   }
 }
