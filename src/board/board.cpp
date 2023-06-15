@@ -262,33 +262,33 @@ Board::~Board() {
   }
 }
 
-MoveValidity Board::validateMove(ChessMove * move) {
+MoveValidity Board::validateMove(ChessMove *move) {
 
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
   const auto fromPiece = board[fromY][fromX].piece;
 
-    switch (fromPiece->type) {
-    case PieceType::ROOK:
-      return isRookMoveValid(move);
-    case PieceType::BISHOP:
-      return isBishopMoveValid(move);
-    case PieceType::PAWN:
-      return isPawnMoveValid(move);
-    case PieceType::QUEEN:
-      return isQueenMoveValid(move);
-    case PieceType::KNIGHT:
-      return isKnightMoveValid(move);
-    case PieceType::KING:
-      return isKingMoveValid(move);
-    default:
-      assert(0 && "TODO: implement default state in validateMove");
-      break;
-    }
+  switch (fromPiece->type) {
+  case PieceType::ROOK:
+    return isRookMoveValid(move);
+  case PieceType::BISHOP:
+    return isBishopMoveValid(move);
+  case PieceType::PAWN:
+    return isPawnMoveValid(move);
+  case PieceType::QUEEN:
+    return isQueenMoveValid(move);
+  case PieceType::KNIGHT:
+    return isKnightMoveValid(move);
+  case PieceType::KING:
+    return isKingMoveValid(move);
+  default:
+    assert(0 && "TODO: implement default state in validateMove");
+    break;
   }
+}
 
-void Board::makeMove(ChessMove* move) {
+void Board::makeMove(ChessMove *move) {
   if (MoveValidity::LegalMove != validateMove(move)) {
     assert(0 && "TODO: handle the NON legal move");
   }

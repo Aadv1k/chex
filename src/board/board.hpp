@@ -1,10 +1,10 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
+#include <cassert>
 #include <iostream>
 #include <stack>
 #include <string>
-#include <cassert>
 
 namespace chex {
 
@@ -43,9 +43,9 @@ public:
   Board();
   ~Board();
 
-  MoveValidity validateMove(ChessMove * move);
-  void makeMove(ChessMove * move);
-   
+  MoveValidity validateMove(ChessMove *move);
+  void makeMove(ChessMove *move);
+
   void print();
 
 private:

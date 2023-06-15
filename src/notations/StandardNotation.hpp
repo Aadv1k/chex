@@ -4,8 +4,8 @@
 #include "./NotationParser.hpp";
 
 namespace chex {
-  class StandardNotationParser : NotationParser {
-    public:
-      ChessMove* parse(const string notation) override;
+class StandardNotationParser : NotationParser {
+public:
+  ChessMove *parse(const string notation) override;
 }
 #endif
