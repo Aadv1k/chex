@@ -31,6 +31,6 @@ chex_win32: $(chex_files)
 all_win32: clean_win32 chex_win32 
 
 clean: 
-	rm -rf ./src/*.o
+	rm -rf ./src/*/**.o
 	rm -rf ./utils/*.o
 	rm -rf ./bin
