@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stack>
 #include <string>
+#include <cassert>
 
 namespace chex {
 
@@ -29,9 +30,6 @@ typedef struct {
 typedef struct {
   Vec2i from;
   Vec2i to;
-  ChessPiece *capturedPiece;
-  ChessPiece *currentPiece;
-  // bool isPromotion; // TODO: implement logic for piece promotion
 } ChessMove;
 
 typedef struct {
@@ -45,18 +43,21 @@ public:
   Board();
   ~Board();
 
+  MoveValidity validateMove(ChessMove * move);
+  void makeMove(ChessMove * move);
+   
+  void print();
+
+private:
+  Cell board[boardSize][boardSize];
+  bool isMoveWithinBounds(ChessMove *move);
+
   MoveValidity isPawnMoveValid(ChessMove *move);
   MoveValidity isRookMoveValid(ChessMove *move);
   MoveValidity isBishopMoveValid(ChessMove *move);
   MoveValidity isKnightMoveValid(ChessMove *move);
   MoveValidity isQueenMoveValid(ChessMove *move);
   MoveValidity isKingMoveValid(ChessMove *move);
-
-  void print();
-
-private:
-  Cell board[boardSize][boardSize];
-  bool isMoveWithinBounds(ChessMove *move);
 };
 
 } // namespace chex

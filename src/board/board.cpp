@@ -1,5 +1,5 @@
 #include "./board.hpp"
-#include "../utils/utils.hpp"
+#include "../../utils/utils.hpp"
 
 namespace chex {
 
@@ -11,16 +11,18 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  if (board[fromY][fromX].piece->type != move->currentPiece->type ||
-      board[fromY][fromX].piece->color != move->currentPiece->color) {
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->type != PieceType::PAWN) {
     return MoveValidity::PieceMismatch;
   }
 
-  if (board[toY][toX].piece->color == move->currentPiece->color) {
+  if (fromPiece->color == toPiece->color) {
     return MoveValidity::Betrayal;
   }
 
-  switch (move->currentPiece->color) {
+  switch (fromPiece->color) {
   case PieceColor::BLACK:
     if (toY - fromY != 1)
       return MoveValidity::IllegalMove;
@@ -45,17 +47,15 @@ MoveValidity Board::isRookMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  if (board[fromY][fromX].piece->type != move->currentPiece->type ||
-      board[fromY][fromX].piece->color != move->currentPiece->color) {
-    return MoveValidity::PieceMismatch;
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->color == toPiece->color) {
+    return MoveValidity::Betrayal;
   }
 
   if (toY == fromY && fromX != toX)
     return MoveValidity::IllegalMove;
-
-  if (move->currentPiece->color == move->capturedPiece->color) {
-    return MoveValidity::Betrayal;
-  }
 
   const int offset = toY > fromY ? 1 : -1;
   auto const b = Board::board;
@@ -79,12 +79,10 @@ MoveValidity Board::isKnightMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  if (board[fromY][fromX].piece->type != move->currentPiece->type ||
-      board[fromY][fromX].piece->color != move->currentPiece->color) {
-    return MoveValidity::PieceMismatch;
-  }
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
 
-  if (board[toY][toX].piece->color == move->currentPiece->color) {
+  if (fromPiece->color == toPiece->color) {
     return MoveValidity::Betrayal;
   }
 
@@ -108,11 +106,10 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  if (board[fromY][fromX].piece->type != move->currentPiece->type ||
-      board[fromY][fromX].piece->color != move->currentPiece->color) {
-    return MoveValidity::PieceMismatch;
-  }
-  if (board[toY][toX].piece->color == move->currentPiece->color) {
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->color == toPiece->color) {
     return MoveValidity::Betrayal;
   }
 
@@ -152,6 +149,13 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
 
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->color == toPiece->color) {
+    return MoveValidity::Betrayal;
+  }
 
   const int diffX = toX - fromX;
   const int diffY = toY - fromY;
@@ -256,6 +260,51 @@ Board::~Board() {
       delete board[i][j].piece;
     }
   }
+}
+
+MoveValidity Board::validateMove(ChessMove * move) {
+
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+
+    switch (fromPiece->type) {
+    case PieceType::ROOK:
+      return isRookMoveValid(move);
+    case PieceType::BISHOP:
+      return isBishopMoveValid(move);
+    case PieceType::PAWN:
+      return isPawnMoveValid(move);
+    case PieceType::QUEEN:
+      return isQueenMoveValid(move);
+    case PieceType::KNIGHT:
+      return isKnightMoveValid(move);
+    case PieceType::KING:
+      return isKingMoveValid(move);
+    default:
+      assert(0 && "TODO: implement default state in validateMove");
+      break;
+    }
+  }
+
+void Board::makeMove(ChessMove* move) {
+  if (MoveValidity::LegalMove != validateMove(move)) {
+    assert(0 && "TODO: handle the NON legal move");
+  }
+
+  board[move->from.y][move->from.x].state = CellState::EMPTY;
+  board[move->from.y][move->from.x].piece->type = PieceType::NONE;
+
+  auto toLocation = board[move->to.y][move->to.x];
+  auto fromLocation = board[move->to.y][move->to.x];
+
+  if (toLocation.piece->color == fromLocation.piece->color) {
+    assert(0 && "TODO: handle friendly fire");
+  }
+
+  toLocation.piece = fromLocation.piece;
+  toLocation.state = CellState::FILLED;
 }
 
 bool Board::isMoveWithinBounds(ChessMove *move) {

@@ -1,5 +1,5 @@
 #include "../utils/utils.hpp"
-#include "./board.hpp"
+#include "./board/board.hpp"
 #include <iostream>
 
 int main() {
