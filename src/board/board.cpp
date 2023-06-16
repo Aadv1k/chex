@@ -288,23 +288,37 @@ MoveValidity Board::validateMove(ChessMove *move) {
   }
 }
 
-void Board::makeMove(ChessMove *move) {
+void Board::setCellToCell(Vec2i from, Vec2i to) {
+  board[from.y][from.x] = board[to.y][to.x];
+
+  board[from.y][from.x].state = CellState::EMPTY;
+  board[from.y][from.x].piece = nullptr;
+}
+
+ChessMove * Board::makeMove(ChessMove *move) {
   if (MoveValidity::LegalMove != validateMove(move)) {
     assert(0 && "TODO: handle the NON legal move");
   }
 
-  board[move->from.y][move->from.x].state = CellState::EMPTY;
-  board[move->from.y][move->from.x].piece->type = PieceType::NONE;
-
   auto toLocation = board[move->to.y][move->to.x];
   auto fromLocation = board[move->to.y][move->to.x];
 
-  if (toLocation.piece->color == fromLocation.piece->color) {
-    assert(0 && "TODO: handle friendly fire");
-  }
+  // This should not be triggered 
+  // if (toLocation.piece->color == fromLocation.piece->color) {assert(0 && "TODO: handle friendly fire");}
 
-  toLocation.piece = fromLocation.piece;
-  toLocation.state = CellState::FILLED;
+  setCellToCell(move->from, move->to);
+  undoStack.push(move);
+  return move;
+}
+
+ChessMove * Board::undoMove() {
+  if (undoStack.empty()) {
+    assert(0 && "TODO: handle empty stack in undoMove");
+  }
+  ChessMove * ret = undoStack.top();
+  setCellToCell(ret->to, ret->from);
+  undoStack.pop();
+  return ret;
 }
 
 bool Board::isMoveWithinBounds(ChessMove *move) {

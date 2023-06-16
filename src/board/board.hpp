@@ -44,14 +44,16 @@ public:
   ~Board();
 
   MoveValidity validateMove(ChessMove *move);
-  void makeMove(ChessMove *move);
-
+  ChessMove * makeMove(ChessMove *move);
+  ChessMove * undoMove();
   void print();
 
 private:
   Cell board[boardSize][boardSize];
-  bool isMoveWithinBounds(ChessMove *move);
+  std::stack<ChessMove *> undoStack;
 
+  bool isMoveWithinBounds(ChessMove *move);
+  void setCellToCell(Vec2i from, Vec2i to);
   MoveValidity isPawnMoveValid(ChessMove *move);
   MoveValidity isRookMoveValid(ChessMove *move);
   MoveValidity isBishopMoveValid(ChessMove *move);
