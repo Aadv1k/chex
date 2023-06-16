@@ -12,14 +12,9 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   const int toX = move->to.x, toY = move->to.y;
 
   const auto fromPiece = board[fromY][fromX].piece;
-  const auto toPiece = board[toY][toX].piece;
 
   if (fromPiece->type != PieceType::PAWN) {
     return MoveValidity::PieceMismatch;
-  }
-
-  if (fromPiece->color == toPiece->color) {
-    return MoveValidity::Betrayal;
   }
 
   switch (fromPiece->color) {
@@ -27,13 +22,17 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
     if (toY - fromY != 1)
       return MoveValidity::IllegalMove;
     break;
+
   case PieceColor::WHITE:
     if (toY - fromY != -1)
       return MoveValidity::IllegalMove;
     break;
+  case PieceColor::GREY:
+    assert(0 && "something wrong here");
+    break;
   }
 
-  if (toX - fromX != -1 && toX - fromX != 1)
+  if (toX - fromX <= -1)
     return MoveValidity::IllegalMove;
 
   return MoveValidity::LegalMove;
@@ -86,19 +85,15 @@ MoveValidity Board::isKnightMoveValid(ChessMove *move) {
     return MoveValidity::Betrayal;
   }
 
-  const int diffX = fromX - toX;
-  const int diffY = fromY - toY;
+  const int diffX = abs(fromX - toX);
+  const int diffY = abs(fromY - toY);
 
-  if (!(diffX <= 3) || !(diffX <= 0 && diffX >= -3))
+  if (!((diffX == 1 && diffY == 2) || (diffX == 2 && diffY == 1))) {
     return MoveValidity::IllegalMove;
+  }
 
-  if (!(diffY <= 3) || !(diffY <= 0 && diffY >= -3))
-    return MoveValidity::IllegalMove;
+  return MoveValidity::LegalMove;}
 
-  return MoveValidity::LegalMove;
-}
-
-// TODO: test bishop move validity checker
 MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
@@ -113,18 +108,21 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
     return MoveValidity::Betrayal;
   }
 
-  if (toX - fromX != fromX - toX)
+  const int diffX = abs(toX - fromX);
+  const int diffY = abs(toY - fromY);
+
+  if (diffX != diffY)
     return MoveValidity::IllegalMove;
 
-  const int offsetY = toY < fromY ? -1 : 1;
-  const int offsetX = toX < fromX ? -1 : 1;
-  auto const b = Board::board;
+  const int offsetX = (toX < fromX) ? -1 : 1;
+  const int offsetY = (toY < fromY) ? -1 : 1;
 
-  for (int i = fromY, j = fromX; i != toY && j < toX; i += offsetY, j += offsetY) {
-    if (b[i][i].state == CellState::FILLED) {
+  for (int i = fromY + offsetY, j = fromX + offsetX; i != toY; i += offsetY, j += offsetX) {
+    if (board[i][j].state == CellState::FILLED) {
       return MoveValidity::BlockedPath;
     }
   }
+
   return MoveValidity::LegalMove;
 }
 
@@ -168,6 +166,26 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
 
   return MoveValidity::LegalMove;
 }
+
+  void Board::printColorMap() {
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        switch (board[i][j].piece->color) {
+        case PieceColor::WHITE:
+          std::cout << "W ";
+          break;
+        case PieceColor::BLACK:
+          std::cout << "B ";
+          break;
+        case PieceColor::GREY:
+          std::cout << "- ";
+          break;
+          
+        }
+      }   
+      std::cout << "\n";
+    }
+  }
 
 void Board::print() {
   for (int i = 0; i < boardSize; i++) {
@@ -217,10 +235,6 @@ void Board::print() {
     return currentPlayer;
   }
 
-  PieceColor Board::setCurrentPlayer(PieceColor color) {
-    currentPlayer = color;
-    return getCurrentPlayer(); 
-  }
 
 
 Board::Board() {
@@ -229,10 +243,17 @@ Board::Board() {
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
       ChessPiece *piece = new ChessPiece{
-          .type = PieceType::NONE, .color = PieceColor::BLACK, .position = {.x = i, .y = j}};
+          .type = PieceType::NONE,
+          .color = PieceColor::GREY,
+          .position = {.x = i, .y = j}
+      };
 
-      piece->color = (i <= 1) ? PieceColor::BLACK : PieceColor::WHITE;
-
+      if (i <= 1) {
+        piece->color = PieceColor::BLACK;
+      } else if (i >= 6) {
+        piece->color = PieceColor::WHITE;
+      }
+      
       if (i == 1 || i == boardSize - 2) {
         piece->type = PieceType::PAWN;
       }
@@ -275,10 +296,7 @@ Board::~Board() {
 }
 
 MoveValidity Board::validateMove(ChessMove *move) {
-
   const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-
   const auto fromPiece = board[fromY][fromX].piece;
 
   switch (fromPiece->type) {
@@ -301,32 +319,30 @@ MoveValidity Board::validateMove(ChessMove *move) {
 }
 
 void Board::setCellToCell(Vec2i from, Vec2i to) {
-  board[from.y][from.x] = board[to.y][to.x];
+  board[to.y][to.x] = board[from.y][from.x];
 
   board[from.y][from.x].state = CellState::EMPTY;
   board[from.y][from.x].piece = nullptr;
 }
 
 ChessMove * Board::makeMove(ChessMove *move) {
-  auto toLocation = board[move->to.y][move->to.x];
-  auto fromLocation = board[move->to.y][move->to.x];
+  auto fromLocation = board[move->from.y][move->from.x];
 
-  if (fromLocation.piece->color != getCurrentPlayer()) {
-    assert(0 && "TODO: handle wrong player making the move");
+  if (fromLocation.state == CellState::EMPTY) {
+    assert(0 && "TODO: EMPTY location");
   }
 
-
+  if (fromLocation.piece->color != currentPlayer) {
+    assert(0 && "TODO: handle wrong player making the move");
+  }
 
   if (MoveValidity::LegalMove != validateMove(move)) {
     assert(0 && "TODO: handle the NON legal move");
   }
-
-  // This should not be triggered 
-  // if (toLocation.piece->color == fromLocation.piece->color) {assert(0 && "TODO: handle friendly fire");}
-
   setCellToCell(move->from, move->to);
   undoStack.push(move);
-  setCurrentPlayer(getCurrentPlayer() == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE);
+
+  currentPlayer = currentPlayer == PieceColor::BLACK ? PieceColor::WHITE : PieceColor::BLACK;
 
   return move;
 }

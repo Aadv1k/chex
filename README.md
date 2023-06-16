@@ -27,3 +27,13 @@ run the clean up after or it will fail
 ```shell
 make clean_win32
 ```
+
+## Test
+
+```shell
+make engine/tests
+./bin/engine.test
+```
+
+## TODO
+- Fix the implementation for the knight validity check

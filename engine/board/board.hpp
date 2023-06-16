@@ -10,7 +10,7 @@ namespace chex {
 
 enum PieceType { PAWN, BISHOP, KING, QUEEN, KNIGHT, ROOK, NONE };
 
-enum PieceColor { BLACK, WHITE };
+enum PieceColor { BLACK, WHITE, GREY };
 
 enum MoveValidity { OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove, Betrayal, BlockedPath };
 
@@ -40,6 +40,8 @@ typedef struct {
 class Board {
 public:
   static const int boardSize = 8;
+  Cell board[boardSize][boardSize];
+
   Board();
   ~Board();
 
@@ -49,9 +51,9 @@ public:
   PieceColor getCurrentPlayer();
   PieceColor setCurrentPlayer(PieceColor color);
   void print();
+  void printColorMap();
 
 private:
-  Cell board[boardSize][boardSize];
   std::stack<ChessMove *> undoStack;
   PieceColor currentPlayer;
 
