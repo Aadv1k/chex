@@ -55,6 +55,8 @@ public:
 
 private:
   std::stack<ChessMove *> undoStack;
+  std::stack<ChessPiece *> capturedStack;
+
   PieceColor currentPlayer;
 
   bool isMoveWithinBounds(ChessMove *move);

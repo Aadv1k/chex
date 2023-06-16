@@ -88,12 +88,14 @@ MoveValidity Board::isKnightMoveValid(ChessMove *move) {
   const int diffX = abs(fromX - toX);
   const int diffY = abs(fromY - toY);
 
-  if (!((diffX == 1 && diffY == 2) || (diffX == 2 && diffY == 1))) {
+  if (diffX > 3 || diffY > 3) {
     return MoveValidity::IllegalMove;
   }
 
-  return MoveValidity::LegalMove;}
+  return MoveValidity::LegalMove;
+}
 
+// TODO: test bishop move validity checker
 MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   if (!isMoveWithinBounds(move))
     return MoveValidity::OutOfBoundsMove;
@@ -108,19 +110,24 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
     return MoveValidity::Betrayal;
   }
 
-  const int diffX = abs(toX - fromX);
-  const int diffY = abs(toY - fromY);
+  const int diffX = toX - fromX;
+  const int diffY = toY - fromY;
 
-  if (diffX != diffY)
+  if (abs(diffX) != abs(diffY))
     return MoveValidity::IllegalMove;
 
-  const int offsetX = (toX < fromX) ? -1 : 1;
-  const int offsetY = (toY < fromY) ? -1 : 1;
+  const int offsetX = (diffX > 0) ? 1 : -1;
+  const int offsetY = (diffY > 0) ? 1 : -1;
 
-  for (int i = fromY + offsetY, j = fromX + offsetX; i != toY; i += offsetY, j += offsetX) {
+  int i = fromY + offsetY;
+  int j = fromX + offsetX;
+
+  while (i != toY && j != toX) {
     if (board[i][j].state == CellState::FILLED) {
       return MoveValidity::BlockedPath;
     }
+    i += offsetY;
+    j += offsetX;
   }
 
   return MoveValidity::LegalMove;
@@ -316,6 +323,9 @@ MoveValidity Board::validateMove(ChessMove *move) {
     assert(0 && "TODO: implement default state in validateMove");
     break;
   }
+
+  // this should not be reached
+  return MoveValidity::IllegalMove;
 }
 
 void Board::setCellToCell(Vec2i from, Vec2i to) {
@@ -327,6 +337,7 @@ void Board::setCellToCell(Vec2i from, Vec2i to) {
 
 ChessMove * Board::makeMove(ChessMove *move) {
   auto fromLocation = board[move->from.y][move->from.x];
+  auto toLocation = board[move->to.y][move->to.x];
 
   if (fromLocation.state == CellState::EMPTY) {
     assert(0 && "TODO: EMPTY location");
@@ -339,6 +350,14 @@ ChessMove * Board::makeMove(ChessMove *move) {
   if (MoveValidity::LegalMove != validateMove(move)) {
     assert(0 && "TODO: handle the NON legal move");
   }
+
+  if (toLocation.state == CellState::FILLED) {
+    capturedStack.push(toLocation.piece);
+  }
+
+
+  toLocation.piece->position = move->to;
+
   setCellToCell(move->from, move->to);
   undoStack.push(move);
 
@@ -350,11 +369,31 @@ ChessMove * Board::makeMove(ChessMove *move) {
 ChessMove * Board::undoMove() {
   if (undoStack.empty()) {
     assert(0 && "TODO: handle empty stack in undoMove");
+    return nullptr;
   }
-  ChessMove * ret = undoStack.top();
-  setCellToCell(ret->to, ret->from);
+
+  ChessMove * lastMove = undoStack.top();
+  ChessPiece * lastCaptured = capturedStack.top();
+
+
+  
+
+  Cell restoredCell = {
+    .state = (
+              lastCaptured->position.x == lastMove->to.x &&
+              lastCaptured->position.y == lastMove->to.y
+              ) ? CellState::FILLED : CellState::EMPTY,
+    .piece = lastCaptured
+  };
+
+  board[lastMove->from.y][lastMove->from.x] = board[lastMove->to.y][lastMove->to.x];
+  board[lastMove->to.y][lastMove->to.x] = restoredCell;
+
+
+
   undoStack.pop();
-  return ret;
+  capturedStack.pop();
+  return lastMove;
 }
 
 bool Board::isMoveWithinBounds(ChessMove *move) {

@@ -33,5 +33,16 @@ int main () {
   };
   b.makeMove(&move4);
   b.print();
+  std::cout << "\n";
+  ChessMove move5 = {
+    .from = {2, 5},
+    .to = {1, 2}
+  };
+  b.makeMove(&move5);
+  b.print();
+  std::cout << "UNDOING PREVIOUS\n";
+  b.undoMove();
+  std::cout << "\n";
+  b.print();
   return 0;
 }
