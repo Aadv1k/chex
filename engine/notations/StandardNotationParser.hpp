@@ -2,6 +2,7 @@
 #define STANDARD_NOTATION_PARSER_HPP
 
 #include "./NotationParser.hpp";
+#include "../../utils/utils.h";
 
 namespace chex {
 class StandardNotationParser : NotationParser {
