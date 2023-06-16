@@ -213,7 +213,19 @@ void Board::print() {
   }
 }
 
+  PieceColor Board::getCurrentPlayer() {
+    return currentPlayer;
+  }
+
+  PieceColor Board::setCurrentPlayer(PieceColor color) {
+    currentPlayer = color;
+    return getCurrentPlayer(); 
+  }
+
+
 Board::Board() {
+  currentPlayer = PieceColor::WHITE;
+
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
       ChessPiece *piece = new ChessPiece{
@@ -296,18 +308,26 @@ void Board::setCellToCell(Vec2i from, Vec2i to) {
 }
 
 ChessMove * Board::makeMove(ChessMove *move) {
+  auto toLocation = board[move->to.y][move->to.x];
+  auto fromLocation = board[move->to.y][move->to.x];
+
+  if (fromLocation.piece->color != getCurrentPlayer()) {
+    assert(0 && "TODO: handle wrong player making the move");
+  }
+
+
+
   if (MoveValidity::LegalMove != validateMove(move)) {
     assert(0 && "TODO: handle the NON legal move");
   }
-
-  auto toLocation = board[move->to.y][move->to.x];
-  auto fromLocation = board[move->to.y][move->to.x];
 
   // This should not be triggered 
   // if (toLocation.piece->color == fromLocation.piece->color) {assert(0 && "TODO: handle friendly fire");}
 
   setCellToCell(move->from, move->to);
   undoStack.push(move);
+  setCurrentPlayer(getCurrentPlayer() == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE);
+
   return move;
 }
 

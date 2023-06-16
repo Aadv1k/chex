@@ -46,11 +46,14 @@ public:
   MoveValidity validateMove(ChessMove *move);
   ChessMove * makeMove(ChessMove *move);
   ChessMove * undoMove();
+  PieceColor getCurrentPlayer();
+  PieceColor setCurrentPlayer(PieceColor color);
   void print();
 
 private:
   Cell board[boardSize][boardSize];
   std::stack<ChessMove *> undoStack;
+  PieceColor currentPlayer;
 
   bool isMoveWithinBounds(ChessMove *move);
   void setCellToCell(Vec2i from, Vec2i to);
