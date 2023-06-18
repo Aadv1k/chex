@@ -2,13 +2,26 @@ CFLAGS = -Wall -Wextra -std=c++17
 CC = g++
 CMD := $(CC) $(CFLAGS)
 
-engine_files := ./engine/board/board.o ./utils/utils.o
-chex_files := ./engine/main.o $(engine_files)
+engine_files := ./engine/board/board.o ./engine/main.o
+ui_files := ./ui/web/server.o
+chex_files :=  $(engine_files) $(ui_files) ./utils/utils.o 
+
 engine_src := ./engine/board/board.cpp
+ui_web_src := ./ui/web/server.cpp
 
 chex: $(engine_files)
 	mkdir -p bin
 	$(CMD) $(chex_files) -o ./bin/chex
+
+utils: ./utils/utils.cpp ./engine/utils.hpp
+	$(CMD) ./engine/utils.cpp
+
+# chex/board
+# chex/board/tests
+# chex/ui
+# chex/ui/tests
+# chex/game
+# chex/game/tests
 
 engine/tests:
 	mkdir -p bin
@@ -17,8 +30,11 @@ engine/tests:
 engine/board: ./engine/board/board.cpp ./src/board/board.hpp
 	$(CMD) ./engine/board/board.cpp
 
-engine/utils: ./utils/utils.cpp ./engine/utils.hpp
-	$(CMD) ./engine/utils.cpp
+ui/web: ./ui/web/server.cpp
+	$(CMD) ./ui/web/server.cpp
+
+ui/web/tests:
+	$(CMD) $(ui_web_src) -o ./bin/ui_web.test
 
 format:
 	clang-format -i ./**/*.cpp

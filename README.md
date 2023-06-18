@@ -36,4 +36,4 @@ make engine/tests
 ```
 
 ## TODO
-- Fix the implementation for the knight validity check
+- [X] Fix the implementation for the knight validity check
