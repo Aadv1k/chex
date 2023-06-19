@@ -174,25 +174,24 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-  void Board::printColorMap() {
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        switch (board[i][j].piece->color) {
-        case PieceColor::WHITE:
-          std::cout << "W ";
-          break;
-        case PieceColor::BLACK:
-          std::cout << "B ";
-          break;
-        case PieceColor::GREY:
-          std::cout << "- ";
-          break;
-          
-        }
-      }   
-      std::cout << "\n";
+void Board::printColorMap() {
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 8; j++) {
+      switch (board[i][j].piece->color) {
+      case PieceColor::WHITE:
+        std::cout << "W ";
+        break;
+      case PieceColor::BLACK:
+        std::cout << "B ";
+        break;
+      case PieceColor::GREY:
+        std::cout << "- ";
+        break;
+      }
     }
+    std::cout << "\n";
   }
+}
 
 void Board::print() {
   for (int i = 0; i < BOARD_SIZE; i++) {
@@ -238,11 +237,7 @@ void Board::print() {
   }
 }
 
-  PieceColor Board::getCurrentPlayer() {
-    return currentPlayer;
-  }
-
-
+PieceColor Board::getCurrentPlayer() { return currentPlayer; }
 
 Board::Board() {
   currentPlayer = PieceColor::WHITE;
@@ -250,17 +245,14 @@ Board::Board() {
   for (int i = 0; i < BOARD_SIZE; i++) {
     for (int j = 0; j < BOARD_SIZE; j++) {
       ChessPiece *piece = new ChessPiece{
-          .type = PieceType::NONE,
-          .color = PieceColor::GREY,
-          .position = {.x = i, .y = j}
-      };
+          .type = PieceType::NONE, .color = PieceColor::GREY, .position = {.x = i, .y = j}};
 
       if (i <= 1) {
         piece->color = PieceColor::BLACK;
       } else if (i >= 6) {
         piece->color = PieceColor::WHITE;
       }
-      
+
       if (i == 1 || i == BOARD_SIZE - 2) {
         piece->type = PieceType::PAWN;
       }
@@ -335,7 +327,7 @@ void Board::setCellToCell(Vec2i from, Vec2i to) {
   board[from.y][from.x].piece = nullptr;
 }
 
-ChessMove * Board::makeMove(ChessMove *move) {
+ChessMove *Board::makeMove(ChessMove *move) {
   auto fromLocation = board[move->from.y][move->from.x];
   auto toLocation = board[move->to.y][move->to.x];
 
@@ -355,7 +347,6 @@ ChessMove * Board::makeMove(ChessMove *move) {
     capturedStack.push(toLocation.piece);
   }
 
-
   toLocation.piece->position = move->to;
 
   setCellToCell(move->from, move->to);
@@ -366,30 +357,23 @@ ChessMove * Board::makeMove(ChessMove *move) {
   return move;
 }
 
-ChessMove * Board::undoMove() {
+ChessMove *Board::undoMove() {
   if (undoStack.empty()) {
     assert(0 && "TODO: handle empty stack in undoMove");
     return nullptr;
   }
 
-  ChessMove * lastMove = undoStack.top();
-  ChessPiece * lastCaptured = capturedStack.top();
+  ChessMove *lastMove = undoStack.top();
+  ChessPiece *lastCaptured = capturedStack.top();
 
-
-  
-
-  Cell restoredCell = {
-    .state = (
-              lastCaptured->position.x == lastMove->to.x &&
-              lastCaptured->position.y == lastMove->to.y
-              ) ? CellState::FILLED : CellState::EMPTY,
-    .piece = lastCaptured
-  };
+  Cell restoredCell = {.state = (lastCaptured->position.x == lastMove->to.x &&
+                                 lastCaptured->position.y == lastMove->to.y)
+                                    ? CellState::FILLED
+                                    : CellState::EMPTY,
+                       .piece = lastCaptured};
 
   board[lastMove->from.y][lastMove->from.x] = board[lastMove->to.y][lastMove->to.x];
   board[lastMove->to.y][lastMove->to.x] = restoredCell;
-
-
 
   undoStack.pop();
   capturedStack.pop();

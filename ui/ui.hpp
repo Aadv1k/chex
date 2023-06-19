@@ -4,12 +4,12 @@
 #include "../game/game.hpp"
 
 namespace chex {
-   class BaseUI {
-        public:
-            Game game;
-            virtual void render() = 0;
-   };
+class BaseUI {
+public:
+  Game game;
+  virtual void render() = 0;
+};
 
-}
+} // namespace chex
 
 #endif

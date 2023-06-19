@@ -8,7 +8,7 @@ ui_files := ./ui/web/WebUI.o
 utils := ./utils/utils.o
 main := ./main.o
 
-chex_files := $(board_files) $(game_files) $(utils) $(main)  $(ui_files)
+chex_files := $(board_files) $(game_files) $(utils) $(main) $(ui_files)
 
 chex: $(chex_files)
 	mkdir -p bin
