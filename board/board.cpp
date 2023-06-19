@@ -1,5 +1,5 @@
 #include "./board.hpp"
-#include "../../utils/utils.hpp"
+#include "../utils/utils.hpp"
 
 namespace chex {
 

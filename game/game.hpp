@@ -1,9 +1,12 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "../engine/board/board.hpp";
+#include "../board/board.hpp"
 #include <cassert>
+#include <array>
+#include <stack>
 
+using std::array, std::stack;
 
 namespace chex {
   enum GameState {
@@ -11,18 +14,17 @@ namespace chex {
     WhiteMate,
     BlackCheck,
     BlackMate
-  }
+  };
 
   class Game {
     public: 
-      MoveValidity makeMove(ChessMove * move);
+      MoveValidity validateMove(ChessMove * move);
+      void makeMove(ChessMove * move);
       void undoMove();  
-      std::array<std::array<Cell>> get2dBoard();
-      GameState getGameState();
-      stack<ChessPiece *> getCaptured();
+      Cell* getBoard();
 
     private:
       Board chessBoard;
-  }
+  };
 }
 #endif

@@ -6,6 +6,8 @@
 #include <stack>
 #include <string>
 
+#define BOARD_SIZE 8
+
 namespace chex {
 
 enum PieceType { PAWN, BISHOP, KING, QUEEN, KNIGHT, ROOK, NONE };
@@ -39,8 +41,7 @@ typedef struct {
 
 class Board {
 public:
-  static const int boardSize = 8;
-  Cell board[boardSize][boardSize];
+  Cell board[BOARD_SIZE][BOARD_SIZE];
 
   Board();
   ~Board();

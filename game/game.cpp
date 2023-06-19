@@ -1,23 +1,20 @@
-#include "./game.hpp";
+#include "./game.hpp"
 
 namespace chex {
-  MoveValidity Game::makeMove(ChessMove * move) {
-    return chessBoard.makeMove(move);
+  void Game::makeMove(ChessMove * move) {
+    chessBoard.makeMove(move);
+  }
+
+  MoveValidity Game::validateMove(ChessMove * move) {
+    return chessBoard.validateMove(move);
   }
 
   void Game::undoMove() {
-    chessBoard.undoMove(move);
+    chessBoard.undoMove();
   }
 
-  std::array<std::array<Cell>> get2dBoard() {
-    return chessBoard.board;
+  Cell* Game::getBoard () {
+    return &(chessBoard.board[0][0]);
   }
 
-  Game::getGameState() {
-    assert(0 && "getGameState not implemented");
-  }
-
-  stack<ChessPiece *> Game::getCaptured() {
-    return chessBoard.capturedStack; 
-  }
-}
+};

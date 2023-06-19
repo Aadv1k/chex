@@ -2,39 +2,32 @@ CFLAGS = -Wall -Wextra -std=c++17
 CC = g++
 CMD := $(CC) $(CFLAGS)
 
-engine_files := ./engine/board/board.o ./engine/main.o
-ui_files := ./ui/web/server.o
-chex_files :=  $(engine_files) $(ui_files) ./utils/utils.o 
+board_files := ./board/board.o
+game_files := ./game/game.o
+ui_files := ./ui/web/ui.o
+utils := ./utils/utils.o
+main := ./main.o
 
-engine_src := ./engine/board/board.cpp
-ui_web_src := ./ui/web/server.cpp
+chex_files := $(board_files) $(game_files)  $(utils) $(main)
 
-chex: $(engine_files)
+chex: $(chex_files)
 	mkdir -p bin
 	$(CMD) $(chex_files) -o ./bin/chex
+
+chex/main: main.cpp
+	$(CMD) -c ./main.cpp
 
 utils: ./utils/utils.cpp ./engine/utils.hpp
 	$(CMD) ./engine/utils.cpp
 
-# chex/board
-# chex/board/tests
-# chex/ui
-# chex/ui/tests
-# chex/game
-# chex/game/tests
+chex/board: ./board/board.cpp ./board/board.hpp
+	$(CMD) -c ./board/board.cpp 
 
-engine/tests:
-	mkdir -p bin
-	$(CMD) ./tests/board.cpp $(engine_src) -o ./bin/engine.test
+chex/game: ./game/game.cpp ./game/game.hpp
+	$(CMD) -c ./game/game.cpp  -o ./game/game.o
 
-engine/board: ./engine/board/board.cpp ./src/board/board.hpp
-	$(CMD) ./engine/board/board.cpp
-
-ui/web: ./ui/web/server.cpp
-	$(CMD) ./ui/web/server.cpp
-
-ui/web/tests:
-	$(CMD) $(ui_web_src) -o ./bin/ui_web.test
+chex/ui/web: $(wildcard ./ui/web/*)
+	$(CMD) -c $(wildcard ./ui/web/*) -o ./ui/web/ui.o
 
 format:
 	clang-format -i ./**/*.cpp
