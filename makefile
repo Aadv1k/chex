@@ -4,11 +4,11 @@ CMD := $(CC) $(CFLAGS)
 
 board_files := ./board/board.o
 game_files := ./game/game.o
-ui_files := ./ui/web/ui.o
+ui_files := ./ui/web/WebUI.o
 utils := ./utils/utils.o
 main := ./main.o
 
-chex_files := $(board_files) $(game_files)  $(utils) $(main)
+chex_files := $(board_files) $(game_files) $(utils) $(main)  $(ui_files)
 
 chex: $(chex_files)
 	mkdir -p bin
@@ -26,8 +26,8 @@ chex/board: ./board/board.cpp ./board/board.hpp
 chex/game: ./game/game.cpp ./game/game.hpp
 	$(CMD) -c ./game/game.cpp  -o ./game/game.o
 
-chex/ui/web: $(wildcard ./ui/web/*)
-	$(CMD) -c $(wildcard ./ui/web/*) -o ./ui/web/ui.o
+chex/ui/web: ./ui/web/WebUI.hpp ./ui/web/WebUI.cpp
+	$(CMD) -c ./ui/web/WebUI.cpp -o ./ui/web/WebUI.o
 
 format:
 	clang-format -i ./**/*.cpp
@@ -47,7 +47,7 @@ engine_win32: $(engine_files)
 all_win32: clean_win32 engine_win32 
 
 clean: 
-	rm -rf $(engine_files)
+	rm -rf $(chex_files)
 	rm -rf ./tests/**/*.o
 	rm -rf ./utils/*.o
 	rm -rf ./bin

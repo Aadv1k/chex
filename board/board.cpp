@@ -195,8 +195,8 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
   }
 
 void Board::print() {
-  for (int i = 0; i < boardSize; i++) {
-    for (int j = 0; j < boardSize; j++) {
+  for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
       if (board[i][j].state == CellState::FILLED) {
         const ChessPiece *piece = board[i][j].piece;
         std::string pieceSymbol;
@@ -247,8 +247,8 @@ void Board::print() {
 Board::Board() {
   currentPlayer = PieceColor::WHITE;
 
-  for (int i = 0; i < boardSize; i++) {
-    for (int j = 0; j < boardSize; j++) {
+  for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
       ChessPiece *piece = new ChessPiece{
           .type = PieceType::NONE,
           .color = PieceColor::GREY,
@@ -261,28 +261,28 @@ Board::Board() {
         piece->color = PieceColor::WHITE;
       }
       
-      if (i == 1 || i == boardSize - 2) {
+      if (i == 1 || i == BOARD_SIZE - 2) {
         piece->type = PieceType::PAWN;
       }
 
-      if (i == 0 || i == boardSize - 1) {
+      if (i == 0 || i == BOARD_SIZE - 1) {
         switch (j) {
-        case boardSize - 1:
+        case BOARD_SIZE - 1:
         case 0:
           piece->type = PieceType::ROOK;
           break;
-        case boardSize - 2:
+        case BOARD_SIZE - 2:
         case 1:
           piece->type = PieceType::KNIGHT;
           break;
-        case boardSize - 3:
+        case BOARD_SIZE - 3:
         case 2:
           piece->type = PieceType::BISHOP;
           break;
         case 3:
           piece->type = PieceType::QUEEN;
           break;
-        case boardSize - 4:
+        case BOARD_SIZE - 4:
           piece->type = PieceType::KING;
           break;
         }
@@ -295,8 +295,8 @@ Board::Board() {
 }
 
 Board::~Board() {
-  for (int i = 0; i < boardSize; i++) {
-    for (int j = 0; j < boardSize; j++) {
+  for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
       delete board[i][j].piece;
     }
   }
@@ -397,15 +397,13 @@ ChessMove * Board::undoMove() {
 }
 
 bool Board::isMoveWithinBounds(ChessMove *move) {
-  const int size = boardSize;
-
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  if (size <= fromX || size <= fromY)
+  if (BOARD_SIZE <= fromX || BOARD_SIZE <= fromY)
     return false;
 
-  if (size <= toX || size <= toY)
+  if (BOARD_SIZE <= toX || BOARD_SIZE <= toY)
     return false;
 
   return true;
