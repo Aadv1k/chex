@@ -3,11 +3,13 @@
 
 #include "../ui.hpp"
 #include "../../lib/httplib.h"
+
 #include <iostream>
+#include <string>
 
-#define HTTP_PORT 8080
+#define HTTP_PORT 8000
 
-using std::cout;
+using std::cout, std::string;
 
 namespace chex {
   class WebUI : public BaseUI {
