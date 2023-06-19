@@ -1,5 +1,7 @@
 #include "./ui/web/WebUI.hpp"
+#include "./board/board.hpp"
 #include <iostream>
+
 
 
 using namespace chex;

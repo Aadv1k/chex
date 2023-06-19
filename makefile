@@ -26,7 +26,7 @@ chex/board: ./board/board.cpp ./board/board.hpp
 chex/game: ./game/game.cpp ./game/game.hpp
 	$(CMD) -c ./game/game.cpp  -o ./game/game.o
 
-chex/ui/web: ./ui/web/WebUI.hpp ./ui/web/WebUI.cpp
+chex/ui/web: ./ui/web/WebUI.hpp ./ui/web/WebUI.cpp ./ui/web/index.h
 	$(CMD) -c ./ui/web/WebUI.cpp -o ./ui/web/WebUI.o
 
 format:

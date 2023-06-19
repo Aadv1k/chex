@@ -298,6 +298,10 @@ MoveValidity Board::validateMove(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const auto fromPiece = board[fromY][fromX].piece;
 
+  if (fromPiece->color != currentPlayer) {
+      return MoveValidity::IllegalMove;
+  }
+
   switch (fromPiece->type) {
   case PieceType::ROOK:
     return isRookMoveValid(move);
@@ -312,7 +316,7 @@ MoveValidity Board::validateMove(ChessMove *move) {
   case PieceType::KING:
     return isKingMoveValid(move);
   default:
-    assert(0 && "TODO: implement default state in validateMove");
+    return MoveValidity::IllegalMove;
     break;
   }
 
