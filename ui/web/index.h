@@ -60,29 +60,29 @@ function renderBoard(data) {
 
     let piece;
     if (color === "BLACK" && pieceType === "ROOK") {
-        piece = "&#9820;"; // Rook (Black)
+        piece = "&#9820;";
     } else if (color === "WHITE" && pieceType === "ROOK") {
-        piece = "&#9814;"; // Rook (White)
+        piece = "&#9814;";
     } else if (color === "BLACK" && pieceType === "BISHOP") {
-        piece = "&#9822;"; // Bishop (Black)
+        piece = "&#9821;";
     } else if (color === "WHITE" && pieceType === "BISHOP") {
-        piece = "&#9815;"; // Bishop (White)
+        piece = "&#9815;";
     } else if (color === "BLACK" && pieceType === "KNIGHT") {
-        piece = "&#9821;"; // Knight (Black)
+        piece = "&#9822;";
     } else if (color === "WHITE" && pieceType === "KNIGHT") {
-        piece = "&#9816;"; // Knight (White)
+        piece = "&#9816;";
     } else if (color === "BLACK" && pieceType === "QUEEN") {
-        piece = "&#9819;"; // Queen (Black)
+        piece = "&#9818;";
     } else if (color === "WHITE" && pieceType === "QUEEN") {
-        piece = "&#9813;"; // Queen (White)
+        piece = "&#9812;";
     } else if (color === "BLACK" && pieceType === "KING") {
-        piece = "&#9818;"; // King (Black)
+        piece = "&#9819;";
     } else if (color === "WHITE" && pieceType === "KING") {
-        piece = "&#9812;"; // King (White)
+        piece = "&#9813;";
     } else if (color === "BLACK" && pieceType === "PAWN") {
-        piece = "&#9823;"; // Pawn (Black)
+        piece = "&#9823;";
     } else if (color === "WHITE" && pieceType === "PAWN") {
-        piece = "&#9817;"; // Pawn (White)
+        piece = "&#9817;";
     }
 
     let pieceElem = document.createElement("span");
