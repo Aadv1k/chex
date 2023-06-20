@@ -247,35 +247,37 @@ void Board::setCellToCell(Vec2i from, Vec2i to) {
 }
 
 
-MoveValidity Board::isPawnMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(move))
-    return MoveValidity::OutOfBoundsMove;
-
+MoveValidity Board::isPawnMoveValid(ChessMove* move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
   const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
 
-  if (fromPiece->type != PieceType::PAWN) {
+  const bool cellEmpty = board[toY][toX].state == CellState::EMPTY;
+
+  if (!cellEmpty && toPiece->color == fromPiece->color) {
     return MoveValidity::PieceMismatch;
   }
 
   switch (fromPiece->color) {
-  case PieceColor::BLACK:
-    if (toY - fromY != 1)
-      return MoveValidity::IllegalMove;
-    break;
-  case PieceColor::WHITE:
-    if (toY - fromY != -1)
-      return MoveValidity::IllegalMove;
-    break;
-  case PieceColor::GREY:
-    assert(0 && "something wrong here");
-    break;
+    case PieceColor::WHITE:
+      if (toY - fromY != -1) return MoveValidity::IllegalMove;
+      break;
+    case PieceColor::BLACK:
+      if (toY - fromY != 1) return MoveValidity::IllegalMove;
+      break;
+    case PieceColor::GREY:
+      assert(0 && "TODO: handle GREY piece in isPawnMoveValid");
+      break;
   }
 
-  if (toX - fromX <= -1)
-    return MoveValidity::IllegalMove;
+
+   
+  if (
+      (cellEmpty && toX - fromX == 1) ||
+      (cellEmpty && toX - fromX == -1)
+      ) return MoveValidity::IllegalMove;
 
   return MoveValidity::LegalMove;
 }

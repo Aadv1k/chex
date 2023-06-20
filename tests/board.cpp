@@ -28,5 +28,11 @@ int main() {
   b.print();
   std::cout << "\n";
 
+  std::cout << "ILLEGAL MOVE" << "\n";
+  ChessMove move4 = {.from = {6, 1}, .to = {5, 2}};
+  b.makeMove(&move4);
+  b.print();
+  std::cout << "\n";
+
   return 0;
 }
