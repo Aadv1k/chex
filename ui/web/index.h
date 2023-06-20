@@ -40,16 +40,17 @@ function renderBoard(data) {
     for (const key in parsed) {
     const item = parsed[key];
     let cell = document.createElement("span");
-    cell.setAttribute("data-loc", key);
+    cell.setAttribute("data-loc", key.split('-').reverse().join("-"));
 
     const row = parseInt(key.split("-")[0]);
     const col = parseInt(key.split("-")[1]);
 
     cell.classList.add((row + col) % 2 === 0 ? "white" : "black");
     cell.classList.add("cell");
+    cell.setAttribute("data-empty", false);
 
     if (item.state === "empty") {
-        cell.setAttribute("data-empty", null);
+        cell.setAttribute("data-empty", true);
         chess.appendChild(cell);
         continue;
     }
@@ -100,42 +101,42 @@ window.selected = null;
 
 function attachEventListeners() {
     for (const elem of document.getElementsByClassName("cell")) {
-    elem.addEventListener("click", async (event) => {
-        const target = event.currentTarget;
-        const isEmpty = target.getAttribute("data-empty");
-        const loc = target.getAttribute("data-loc");
+        elem.addEventListener("click", async (event) => {
+            let target = event.currentTarget,
+                loc = target.getAttribute("data-loc");
+                isEmpty = target.getAttribute("data-empty") === "true"
 
-        if (!isEmpty || window.selected === null) {
-            elem.classList.add("raised");
-            window.selected = loc;
-            return;
-        }
-
-        if (window.selected === loc) {
-            elem.classList.remove("raised");
-            window.selected = null;
-        } else {
-            console.log("window.selected && selected !== loc");
-            let data = await fetch(`/move?m=${window.selected.split("-").reverse().join("-")}.${loc.split("-").reverse().join("-")}`);
-            let status = await data.text();
-
-            if (status !== "done") {
-                setStatus("<b style='color: red; font-weight: 800'>BAD MOVE!!</b>");
-                setTimeout(() => {
-                    setStatus("");
-                }, 1000);
+            if (!isEmpty && !window.selected) {
+                target.classList.add("raised");
+                window.selected = loc;
                 return;
             }
 
-            window.selected = null;
+            if (!isEmpty && window.selected === loc) {
+                target.classList.remove("raised");
+                window.selected = null;
+                return;
+            }
 
-            let res = await fetch("/board");
-            data = await res.json();
-            renderBoard(data);
-            attachEventListeners();
-        }
+            if (window.selected && window.selected !== loc) {
+                const raised = document.querySelector(`[data-loc="${window.selected}"]`);
+                console.log(`move ${window.selected} to ${loc}`);
 
-    });
+                const res = await fetch(`/move?m=${window.selected}.${loc}`);
+                const moveStatus = await res.text();
+                if (moveStatus === "bad move") {
+                    setAlert("BAD MOVE!");
+                } else {
+                    target.innerHTML = raised.innerHTML;
+                    raised.innerHTML = "";
+                    raised.setAttribute("data-empty", true);
+                    target.setAttribute("data-empty", false);
+                }
+                raised.classList.remove("raised");
+                window.selected = null;
+                return;
+            }
+        });
     }
 }
 
@@ -144,10 +145,464 @@ const setStatus = (html) => {
     elem.innerHTML = html;
 };
 
+const setAlert = (text) => {
+    setStatus("<b style='color: red;font-weight: 800;'>" + text + "</b>");
+    setTimeout(() => {
+        setStatus("");
+    }, 1500)
+}
+
 (async () => {
-    sessionStorage.clear();
-    let res = await fetch("/board");
-    let data = await res.json();
+    const data = JSON.parse(`
+{
+  "0-0": {
+    "state": "filled",
+    "piece": {
+      "type": 5,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "0-1": {
+    "state": "filled",
+    "piece": {
+      "type": 4,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 1
+      }
+    }
+  },
+  "0-2": {
+    "state": "filled",
+    "piece": {
+      "type": 1,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 2
+      }
+    }
+  },
+  "0-3": {
+    "state": "filled",
+    "piece": {
+      "type": 3,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 3
+      }
+    }
+  },
+  "0-4": {
+    "state": "filled",
+    "piece": {
+      "type": 2,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 4
+      }
+    }
+  },
+  "0-5": {
+    "state": "filled",
+    "piece": {
+      "type": 1,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 5
+      }
+    }
+  },
+  "0-6": {
+    "state": "filled",
+    "piece": {
+      "type": 4,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 6
+      }
+    }
+  },
+  "0-7": {
+    "state": "filled",
+    "piece": {
+      "type": 5,
+      "color": 0,
+      "position": {
+        "x": 0,
+        "y": 7
+      }
+    }
+  },
+  "1-0": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 0
+      }
+    }
+  },
+  "1-1": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 1
+      }
+    }
+  },
+  "1-2": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 2
+      }
+    }
+  },
+  "1-3": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 3
+      }
+    }
+  },
+  "1-4": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 4
+      }
+    }
+  },
+  "1-5": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 5
+      }
+    }
+  },
+  "1-6": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 6
+      }
+    }
+  },
+  "1-7": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 0,
+      "position": {
+        "x": 1,
+        "y": 7
+      }
+    }
+  },
+  "2-0": {
+    "state": "empty"
+  },
+  "2-1": {
+    "state": "empty"
+  },
+  "2-2": {
+    "state": "empty"
+  },
+  "2-3": {
+    "state": "empty"
+  },
+  "2-4": {
+    "state": "empty"
+  },
+  "2-5": {
+    "state": "empty"
+  },
+  "2-6": {
+    "state": "empty"
+  },
+  "2-7": {
+    "state": "empty"
+  },
+  "3-0": {
+    "state": "empty"
+  },
+  "3-1": {
+    "state": "empty"
+  },
+  "3-2": {
+    "state": "empty"
+  },
+  "3-3": {
+    "state": "empty"
+  },
+  "3-4": {
+    "state": "empty"
+  },
+  "3-5": {
+    "state": "empty"
+  },
+  "3-6": {
+    "state": "empty"
+  },
+  "3-7": {
+    "state": "empty"
+  },
+  "4-0": {
+    "state": "empty"
+  },
+  "4-1": {
+    "state": "empty"
+  },
+  "4-2": {
+    "state": "empty"
+  },
+  "4-3": {
+    "state": "empty"
+  },
+  "4-4": {
+    "state": "empty"
+  },
+  "4-5": {
+    "state": "empty"
+  },
+  "4-6": {
+    "state": "empty"
+  },
+  "4-7": {
+    "state": "empty"
+  },
+  "5-0": {
+    "state": "empty"
+  },
+  "5-1": {
+    "state": "empty"
+  },
+  "5-2": {
+    "state": "empty"
+  },
+  "5-3": {
+    "state": "empty"
+  },
+  "5-4": {
+    "state": "empty"
+  },
+  "5-5": {
+    "state": "empty"
+  },
+  "5-6": {
+    "state": "empty"
+  },
+  "5-7": {
+    "state": "empty"
+  },
+  "6-0": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 0
+      }
+    }
+  },
+  "6-1": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 1
+      }
+    }
+  },
+  "6-2": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 2
+      }
+    }
+  },
+  "6-3": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 3
+      }
+    }
+  },
+  "6-4": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 4
+      }
+    }
+  },
+  "6-5": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 5
+      }
+    }
+  },
+  "6-6": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 6
+      }
+    }
+  },
+  "6-7": {
+    "state": "filled",
+    "piece": {
+      "type": 0,
+      "color": 1,
+      "position": {
+        "x": 6,
+        "y": 7
+      }
+    }
+  },
+  "7-0": {
+    "state": "filled",
+    "piece": {
+      "type": 5,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 0
+      }
+    }
+  },
+  "7-1": {
+    "state": "filled",
+    "piece": {
+      "type": 4,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 1
+      }
+    }
+  },
+  "7-2": {
+    "state": "filled",
+    "piece": {
+      "type": 1,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 2
+      }
+    }
+  },
+  "7-3": {
+    "state": "filled",
+    "piece": {
+      "type": 3,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 3
+      }
+    }
+  },
+  "7-4": {
+    "state": "filled",
+    "piece": {
+      "type": 2,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 4
+      }
+    }
+  },
+  "7-5": {
+    "state": "filled",
+    "piece": {
+      "type": 1,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 5
+      }
+    }
+  },
+  "7-6": {
+    "state": "filled",
+    "piece": {
+      "type": 4,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 6
+      }
+    }
+  },
+  "7-7": {
+    "state": "filled",
+    "piece": {
+      "type": 5,
+      "color": 1,
+      "position": {
+        "x": 7,
+        "y": 7
+      }
+    }
+  }} `)
     renderBoard(data);
 })();
 )";

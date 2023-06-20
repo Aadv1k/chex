@@ -171,6 +171,8 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
   if (!(diffY <= 1) || !(diffY >= -1))
     return MoveValidity::IllegalMove;
 
+  std::cout << "DEBUG: king move valid\n";
+
   return MoveValidity::LegalMove;
 }
 
@@ -318,6 +320,7 @@ MoveValidity Board::validateMove(ChessMove *move) {
   case PieceType::KNIGHT:
     return isKnightMoveValid(move);
   case PieceType::KING:
+    std::cout << "DEBUG: checking if king move valid\n";
     return isKingMoveValid(move);
   default:
     return MoveValidity::IllegalMove;
