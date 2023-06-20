@@ -33,7 +33,7 @@ function getColorType(p) {
 }
 
 function renderBoard(data) {
-    chess.innerHTML = ""; // Clear the chessboard before re-rendering
+    chess.innerHTML = "";
 
     const parsed = data;
     let i = 0;
@@ -96,64 +96,52 @@ function renderBoard(data) {
     attachEventListeners();
 }
 
+window.selected = null;
+
 function attachEventListeners() {
     for (const elem of document.getElementsByClassName("cell")) {
     elem.addEventListener("click", async (event) => {
         const target = event.currentTarget;
         const isEmpty = target.getAttribute("data-empty");
         const loc = target.getAttribute("data-loc");
-        const selected = getSelected();
 
-        if (selected === loc) {
+        if (!isEmpty || window.selected === null) {
+            elem.classList.add("raised");
+            window.selected = loc;
+            return;
+        }
+
+        if (window.selected === loc) {
             elem.classList.remove("raised");
-            setSelected(null);
-            return;
-        }
+            window.selected = null;
+        } else {
+            console.log("window.selected && selected !== loc");
+            let data = await fetch(`/move?m=${window.selected.split("-").reverse().join("-")}.${loc.split("-").reverse().join("-")}`);
+            let status = await data.text();
 
-        console.log(selected, loc);
-        if (selected && selected !== loc) {
-        let data = await fetch(`/move?m=${selected.split("-").reverse().join("-")}.${loc.split("-").reverse().join("-")}`);
-        let status = await data.text();
+            if (status !== "done") {
+                setStatus("<b style='color: red; font-weight: 800'>BAD MOVE!!</b>");
+                setTimeout(() => {
+                    setStatus("");
+                }, 1000);
+                return;
+            }
 
-        if (status !== "done") {
-            setStatus("<b style='color: red; font-weight: 800'>BAD MOVE!!</b>");
-            setTimeout(() => {
-                setStatus("");
-            }, 1000);
-            return;
-        }
+            window.selected = null;
+
             let res = await fetch("/board");
             data = await res.json();
-            elem.classList.remove("raised");
             renderBoard(data);
             attachEventListeners();
-            return;
         }
 
-        if (!isEmpty) {
-        setSelected(loc);
-        elem.classList.add("raised");
-        return;
-        }
     });
     }
 }
 
-const setSelected = (elem) => {
-    if (!elem) {
-      sessionStorage.removeItem("t");
-      return;
-    }
-    sessionStorage.setItem("t", elem);
-};
-
 const setStatus = (html) => {
     const elem = document.getElementById("status");
     elem.innerHTML = html;
-};
-
-const getSelected = () => {
-    return sessionStorage.getItem("t");
 };
 
 (async () => {
