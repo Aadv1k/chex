@@ -131,6 +131,9 @@ function attachEventListeners() {
                     raised.innerHTML = "";
                     raised.setAttribute("data-empty", true);
                     target.setAttribute("data-empty", false);
+
+                    setPlayer(window.currentPlayer === "black" ? "white" : "black");
+                    window.currentPlayer = window.currentPlayer === "black" ? "white" : "black";
                 }
                 raised.classList.remove("raised");
                 window.selected = null;
@@ -145,10 +148,17 @@ const setStatus = (html) => {
     elem.innerHTML = html;
 };
 
+const setPlayer = (color) => {
+  setStatus(`${color}'s turn`);
+}
+
 const setAlert = (text) => {
+    const elem = document.getElementById("status");
+    let prev = elem.innerHTML;
+
     setStatus("<b style='color: red;font-weight: 800;'>" + text + "</b>");
     setTimeout(() => {
-        setStatus("");
+        setStatus(prev);
     }, 1500)
 }
 
@@ -156,67 +166,85 @@ const setAlert = (text) => {
     const res = await fetch("/board");
     const data = await res.json();
     renderBoard(data);
+    setPlayer("white");
 })();
 )";
 
 
 static const char * STYLE_CSS = R"(
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    main {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+:root {
+    --clr-black: #967259;
+    --clr-white: #dbc1ac;
+    --clr-bg: #38220f;
+    --clr-text: #ffdc73;
+}
 
-    .info {
-        display: flex;
-        justify-content: space-between;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    #chess {
-      display: flex;
-      flex-wrap: wrap;
-      width: 560px;
-    } 
+body {
+    background: var(--clr-bg);
+}
 
-    .cell {
-      width: 70px;
-      aspect-ratio: 1;
-      user-select: none;
-      cursor: pointer;;
-      display: inline-block;
-      position: relative;
-    }
+main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Calisto MT, Bookman Old Style, Bookman, Goudy Old Style, Garamond, Hoefler Text, Bitstream Charter, Georgia, serif;
+    margin-block: .3rem;
+    color: var(--clr-text);
+}
+
+#chess {
+    display: flex;
+    flex-wrap: wrap;
+    width: 560px;
+} 
+
+.cell {
+    width: 70px;
+    aspect-ratio: 1;
+    user-select: none;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
     .black {
-      background-color: #b58863;
+      background-color: var(--clr-black);
     }
     .black:hover {
       background-color: #7c5f43;
     }
 
     .white {
-      background-color: #f0d9b5;
+      background-color: var(--clr-white);
     }
     .white:hover {
       background-color: #ccac8c;
     }
 
-    .raised {
-      transform: scale(1.2);
-      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-      z-index: 999;
-    }
+.raised {
+    transform: scale(1.1);
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+    z-index: 999;
+    border-radius: 1px;
+}
 
-    .piece {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 45px;
-    }
+.piece {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 45px;
+}
 )";
