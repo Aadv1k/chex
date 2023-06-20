@@ -47,10 +47,8 @@ public:
   ~Board();
 
   MoveValidity validateMove(ChessMove *move);
-  ChessMove *makeMove(ChessMove *move);
-  ChessMove *undoMove();
-  PieceColor getCurrentPlayer();
-  PieceColor setCurrentPlayer(PieceColor color);
+  void makeMove(ChessMove *move);
+  void undoMove();
   void print();
   void printColorMap();
 

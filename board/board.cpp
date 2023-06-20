@@ -3,174 +3,6 @@
 
 namespace chex {
 
-// TODO: test pawn move validity checker
-MoveValidity Board::isPawnMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(move))
-    return MoveValidity::OutOfBoundsMove;
-
-  const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-
-  const auto fromPiece = board[fromY][fromX].piece;
-
-  if (fromPiece->type != PieceType::PAWN) {
-    return MoveValidity::PieceMismatch;
-  }
-
-  switch (fromPiece->color) {
-  case PieceColor::BLACK:
-    if (toY - fromY != 1)
-      return MoveValidity::IllegalMove;
-    break;
-
-  case PieceColor::WHITE:
-    if (toY - fromY != -1)
-      return MoveValidity::IllegalMove;
-    break;
-  case PieceColor::GREY:
-    assert(0 && "something wrong here");
-    break;
-  }
-
-  if (toX - fromX <= -1)
-    return MoveValidity::IllegalMove;
-
-  return MoveValidity::LegalMove;
-}
-
-// TODO: test rook move validity checker
-MoveValidity Board::isRookMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(move))
-    return MoveValidity::OutOfBoundsMove;
-
-  const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-
-  const auto fromPiece = board[fromY][fromX].piece;
-  const auto toPiece = board[toY][toX].piece;
-
-  if (fromPiece->color == toPiece->color) {
-    return MoveValidity::Betrayal;
-  }
-
-  if (toY == fromY && fromX != toX)
-    return MoveValidity::IllegalMove;
-
-  const int offset = toY > fromY ? 1 : -1;
-  auto const b = Board::board;
-  int i = fromY;
-
-  while (1) {
-    if (i == toY)
-      break;
-    if (b[i][fromX].state == CellState::FILLED)
-      return MoveValidity::BlockedPath;
-    i += offset;
-  }
-  return MoveValidity::LegalMove;
-}
-
-// TODO: test knight move validity checker
-MoveValidity Board::isKnightMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(move))
-    return MoveValidity::OutOfBoundsMove;
-
-  const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-
-  const auto fromPiece = board[fromY][fromX].piece;
-  const auto toPiece = board[toY][toX].piece;
-
-  if (fromPiece->color == toPiece->color) {
-    return MoveValidity::Betrayal;
-  }
-
-  const int diffX = abs(fromX - toX);
-  const int diffY = abs(fromY - toY);
-
-  if (diffX > 3 || diffY > 3) {
-    return MoveValidity::IllegalMove;
-  }
-
-  return MoveValidity::LegalMove;
-}
-
-// TODO: test bishop move validity checker
-MoveValidity Board::isBishopMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(move))
-    return MoveValidity::OutOfBoundsMove;
-
-  const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-
-  const auto fromPiece = board[fromY][fromX].piece;
-  const auto toPiece = board[toY][toX].piece;
-
-  if (fromPiece->color == toPiece->color) {
-    return MoveValidity::Betrayal;
-  }
-
-  const int diffX = toX - fromX;
-  const int diffY = toY - fromY;
-
-  if (abs(diffX) != abs(diffY))
-    return MoveValidity::IllegalMove;
-
-  const int offsetX = (diffX > 0) ? 1 : -1;
-  const int offsetY = (diffY > 0) ? 1 : -1;
-
-  int i = fromY + offsetY;
-  int j = fromX + offsetX;
-
-  while (i != toY && j != toX) {
-    if (board[i][j].state == CellState::FILLED) {
-      return MoveValidity::BlockedPath;
-    }
-    i += offsetY;
-    j += offsetX;
-  }
-
-  return MoveValidity::LegalMove;
-}
-
-MoveValidity Board::isQueenMoveValid(ChessMove *move) {
-  const MoveValidity pawnMove = isPawnMoveValid(move);
-  std::cout << "checked pawn queen move\n";
-  const MoveValidity rookMove = isRookMoveValid(move);
-  std::cout << "checked r queen move\n";
-  const MoveValidity bishopMove = isBishopMoveValid(move);
-  std::cout << "checked b queen move\n";
-
-
-  if (bishopMove != MoveValidity::LegalMove)
-    return bishopMove;
-  if (pawnMove != MoveValidity::LegalMove)
-    return pawnMove;
-  if (rookMove != MoveValidity::LegalMove)
-    return rookMove;
-
-  return MoveValidity::LegalMove;
-}
-
-MoveValidity Board::isKingMoveValid(ChessMove* move) {
-  const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-
-  const auto fromPiece = board[fromY][fromX].piece;
-  const auto toPiece = board[toY][toX].piece;
-
-  if (fromPiece->color == toPiece->color) {
-    return MoveValidity::Betrayal;
-  }
-
-  const int diffX = abs(toX - fromX);
-  const int diffY = abs(toY - fromY);
-
-  if (diffX > 1 || diffY > 1) {
-    return MoveValidity::IllegalMove;
-  }
-  return MoveValidity::LegalMove;
-}
 
 void Board::printColorMap() {
   for (int i = 0; i < 8; i++) {
@@ -235,8 +67,6 @@ void Board::print() {
   }
 }
 
-PieceColor Board::getCurrentPlayer() { return currentPlayer; }
-
 Board::Board() {
   currentPlayer = PieceColor::WHITE;
 
@@ -295,6 +125,10 @@ Board::~Board() {
 MoveValidity Board::validateMove(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
 
+  if (!isMoveWithinBounds(move)) {
+    return MoveValidity::IllegalMove;
+  }
+
   const auto fromPiece = board[fromY][fromX].piece;
 
   if (fromPiece == NULL) {
@@ -317,7 +151,7 @@ MoveValidity Board::validateMove(ChessMove *move) {
   case PieceType::KNIGHT:
     return isKnightMoveValid(move);
   case PieceType::KING:
-    return MoveValidity::LegalMove;
+    return isKingMoveValid(move);
   default:
     return MoveValidity::IllegalMove;
     break;
@@ -327,14 +161,7 @@ MoveValidity Board::validateMove(ChessMove *move) {
   return MoveValidity::IllegalMove;
 }
 
-void Board::setCellToCell(Vec2i from, Vec2i to) {
-  board[to.y][to.x] = board[from.y][from.x];
-
-  board[from.y][from.x].state = CellState::EMPTY;
-  board[from.y][from.x].piece = nullptr;
-}
-
-ChessMove *Board::makeMove(ChessMove *move) {
+void Board::makeMove(ChessMove *move) {
 
   if (!isMoveWithinBounds(move)) {
     assert(0 && "MOVE out of bounds");
@@ -359,51 +186,219 @@ ChessMove *Board::makeMove(ChessMove *move) {
     capturedStack.push(toLocation.piece);
   }
 
-  toLocation.piece->position = move->to;
-
   setCellToCell(move->from, move->to);
   undoStack.push(move);
 
   currentPlayer = currentPlayer == PieceColor::BLACK ? PieceColor::WHITE : PieceColor::BLACK;
 
-  return move;
 }
 
-ChessMove *Board::undoMove() {
+void Board::undoMove() {
   if (undoStack.empty()) {
     assert(0 && "TODO: handle empty stack in undoMove");
-    return nullptr;
   }
-
   ChessMove *lastMove = undoStack.top();
-  ChessPiece *lastCaptured = capturedStack.top();
 
-  Cell restoredCell = {.state = (lastCaptured->position.x == lastMove->to.x &&
-                                 lastCaptured->position.y == lastMove->to.y)
-                                    ? CellState::FILLED
-                                    : CellState::EMPTY,
-                       .piece = lastCaptured};
+  Cell restoredCell;
+
+  if (!capturedStack.empty()) {
+    ChessPiece *lastCaptured = capturedStack.top();
+
+    restoredCell = {
+      .state = (lastCaptured->position.x == lastMove->to.x &&
+                lastCaptured->position.y == lastMove->to.y)
+      ? CellState::FILLED
+      : CellState::EMPTY,
+      .piece = lastCaptured
+    };
+  } else {
+    restoredCell = {
+      .state = CellState::EMPTY,
+      .piece = nullptr
+    };
+  }
 
   board[lastMove->from.y][lastMove->from.x] = board[lastMove->to.y][lastMove->to.x];
   board[lastMove->to.y][lastMove->to.x] = restoredCell;
 
   undoStack.pop();
   capturedStack.pop();
-  return lastMove;
 }
 
-bool Board::isMoveWithinBounds(ChessMove *move) {
+bool Board::isMoveWithinBounds(ChessMove* move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
-  const int size = BOARD_SIZE - 1;
+  const int size = BOARD_SIZE;
 
-  if (size <= fromX || size <= fromY)
+  if (fromX < 0 || fromX >= size || fromY < 0 || fromY >= size)
     return false;
 
-  if (size <= toX || size <= toY)
+  if (toX < 0 || toX >= size || toY < 0 || toY >= size)
     return false;
 
   return true;
+}
+
+void Board::setCellToCell(Vec2i from, Vec2i to) {
+  board[to.y][to.x] = board[from.y][from.x];
+
+  board[from.y][from.x].state = CellState::EMPTY;
+  board[from.y][from.x].piece = nullptr;
+}
+
+
+MoveValidity Board::isPawnMoveValid(ChessMove *move) {
+  if (!isMoveWithinBounds(move))
+    return MoveValidity::OutOfBoundsMove;
+
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+
+  if (fromPiece->type != PieceType::PAWN) {
+    return MoveValidity::PieceMismatch;
+  }
+
+  switch (fromPiece->color) {
+  case PieceColor::BLACK:
+    if (toY - fromY != 1)
+      return MoveValidity::IllegalMove;
+    break;
+  case PieceColor::WHITE:
+    if (toY - fromY != -1)
+      return MoveValidity::IllegalMove;
+    break;
+  case PieceColor::GREY:
+    assert(0 && "something wrong here");
+    break;
+  }
+
+  if (toX - fromX <= -1)
+    return MoveValidity::IllegalMove;
+
+  return MoveValidity::LegalMove;
+}
+
+// TODO: test rook move validity checker
+MoveValidity Board::isRookMoveValid(ChessMove *move) {
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->color == toPiece->color) {
+    return MoveValidity::Betrayal;
+  }
+
+  if (toY == fromY && fromX != toX)
+    return MoveValidity::IllegalMove;
+
+  const int offset = toY > fromY ? 1 : -1;
+  auto const b = Board::board;
+  int i = fromY;
+
+  while (1) {
+    if (i == toY)
+      break;
+    if (b[i][fromX].state == CellState::FILLED)
+      return MoveValidity::BlockedPath;
+    i += offset;
+  }
+  return MoveValidity::LegalMove;
+}
+
+// TODO: test knight move validity checker
+MoveValidity Board::isKnightMoveValid(ChessMove *move) {
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->color == toPiece->color) {
+    return MoveValidity::Betrayal;
+  }
+
+  const int diffX = abs(fromX - toX);
+  const int diffY = abs(fromY - toY);
+
+  if (diffX > 3 || diffY > 3) {
+    return MoveValidity::IllegalMove;
+  }
+
+  return MoveValidity::LegalMove;
+}
+
+// TODO: test bishop move validity checker
+MoveValidity Board::isBishopMoveValid(ChessMove *move) {
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (fromPiece->color == toPiece->color) {
+    return MoveValidity::Betrayal;
+  }
+
+  const int diffX = toX - fromX;
+  const int diffY = toY - fromY;
+
+  if (abs(diffX) != abs(diffY))
+    return MoveValidity::IllegalMove;
+
+  const int offsetX = (diffX > 0) ? 1 : -1;
+  const int offsetY = (diffY > 0) ? 1 : -1;
+
+  int i = fromY + offsetY;
+  int j = fromX + offsetX;
+
+  while (i != toY && j != toX) {
+    if (board[i][j].state == CellState::FILLED) {
+      return MoveValidity::BlockedPath;
+    }
+    i += offsetY;
+    j += offsetX;
+  }
+
+  return MoveValidity::LegalMove;
+}
+
+MoveValidity Board::isQueenMoveValid(ChessMove *move) {
+  const MoveValidity pawnMove = isPawnMoveValid(move);
+  std::cout << "checked pawn queen move\n";
+  const MoveValidity rookMove = isRookMoveValid(move);
+  std::cout << "checked r queen move\n";
+  const MoveValidity bishopMove = isBishopMoveValid(move);
+  std::cout << "checked b queen move\n";
+
+
+  if (bishopMove != MoveValidity::LegalMove)
+    return bishopMove;
+  if (pawnMove != MoveValidity::LegalMove)
+    return pawnMove;
+  if (rookMove != MoveValidity::LegalMove)
+    return rookMove;
+
+  return MoveValidity::LegalMove;
+}
+
+MoveValidity Board::isKingMoveValid(ChessMove* move) {
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  const int diffX = abs(toX - fromX);
+  const int diffY = abs(toY - fromY);
+
+  if (diffX > 1 || diffY > 1) {
+    return MoveValidity::IllegalMove;
+  }
+  return MoveValidity::LegalMove;
 }
 
 } // namespace chex

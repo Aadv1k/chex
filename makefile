@@ -23,6 +23,9 @@ utils: ./utils/utils.cpp ./engine/utils.hpp
 chex/board: ./board/board.cpp ./board/board.hpp
 	$(CMD) -c ./board/board.cpp 
 
+chex/board/tests:
+	$(CMD) ./tests/board.cpp ./board/board.cpp -o ./bin/board.tests
+
 chex/game: ./game/game.cpp ./game/game.hpp
 	$(CMD) -c ./game/game.cpp  -o ./game/game.o
 
