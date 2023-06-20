@@ -298,8 +298,12 @@ MoveValidity Board::validateMove(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const auto fromPiece = board[fromY][fromX].piece;
 
+  if (fromPiece == NULL) {
+    return MoveValidity::IllegalMove;
+  }
+
   if (fromPiece->color != currentPlayer) {
-      return MoveValidity::IllegalMove;
+    return MoveValidity::IllegalMove;
   }
 
   switch (fromPiece->type) {

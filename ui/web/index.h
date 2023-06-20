@@ -105,11 +105,12 @@ function attachEventListeners() {
         const selected = getSelected();
 
         if (selected === loc) {
-        elem.classList.remove("raised");
-        setSelected("");
-        return;
+            elem.classList.remove("raised");
+            setSelected(null);
+            return;
         }
 
+        console.log(selected, loc);
         if (selected && selected !== loc) {
         let data = await fetch(`/move?m=${selected.split("-").reverse().join("-")}.${loc.split("-").reverse().join("-")}`);
         let status = await data.text();
@@ -117,16 +118,16 @@ function attachEventListeners() {
         if (status !== "done") {
             setStatus("<b style='color: red; font-weight: 800'>BAD MOVE!!</b>");
             setTimeout(() => {
-            setStatus("");
+                setStatus("");
             }, 1000);
             return;
         }
-
-        let res = await fetch("/board");
-        data = await res.json();
-        renderBoard(data);
-        attachEventListeners();
-        return;
+            let res = await fetch("/board");
+            data = await res.json();
+            elem.classList.remove("raised");
+            renderBoard(data);
+            attachEventListeners();
+            return;
         }
 
         if (!isEmpty) {
@@ -139,6 +140,10 @@ function attachEventListeners() {
 }
 
 const setSelected = (elem) => {
+    if (!elem) {
+      sessionStorage.removeItem("t");
+      return;
+    }
     sessionStorage.setItem("t", elem);
 };
 
