@@ -134,9 +134,13 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
 }
 
 MoveValidity Board::isQueenMoveValid(ChessMove *move) {
-  const MoveValidity bishopMove = isBishopMoveValid(move);
   const MoveValidity pawnMove = isPawnMoveValid(move);
+  std::cout << "checked pawn queen move\n";
   const MoveValidity rookMove = isRookMoveValid(move);
+  std::cout << "checked r queen move\n";
+  const MoveValidity bishopMove = isBishopMoveValid(move);
+  std::cout << "checked b queen move\n";
+
 
   if (bishopMove != MoveValidity::LegalMove)
     return bishopMove;
@@ -148,10 +152,7 @@ MoveValidity Board::isQueenMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-MoveValidity Board::isKingMoveValid(ChessMove *move) {
-  if (!isMoveWithinBounds(move))
-    return MoveValidity::OutOfBoundsMove;
-
+MoveValidity Board::isKingMoveValid(ChessMove* move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
@@ -162,17 +163,12 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
     return MoveValidity::Betrayal;
   }
 
-  const int diffX = toX - fromX;
-  const int diffY = toY - fromY;
+  const int diffX = abs(toX - fromX);
+  const int diffY = abs(toY - fromY);
 
-  if (!(diffX <= 1) || !(diffX >= -1))
+  if (diffX > 1 || diffY > 1) {
     return MoveValidity::IllegalMove;
-
-  if (!(diffY <= 1) || !(diffY >= -1))
-    return MoveValidity::IllegalMove;
-
-  std::cout << "DEBUG: king move valid\n";
-
+  }
   return MoveValidity::LegalMove;
 }
 
@@ -298,6 +294,7 @@ Board::~Board() {
 
 MoveValidity Board::validateMove(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
+
   const auto fromPiece = board[fromY][fromX].piece;
 
   if (fromPiece == NULL) {
@@ -320,8 +317,7 @@ MoveValidity Board::validateMove(ChessMove *move) {
   case PieceType::KNIGHT:
     return isKnightMoveValid(move);
   case PieceType::KING:
-    std::cout << "DEBUG: checking if king move valid\n";
-    return isKingMoveValid(move);
+    return MoveValidity::LegalMove;
   default:
     return MoveValidity::IllegalMove;
     break;
@@ -339,6 +335,11 @@ void Board::setCellToCell(Vec2i from, Vec2i to) {
 }
 
 ChessMove *Board::makeMove(ChessMove *move) {
+
+  if (!isMoveWithinBounds(move)) {
+    assert(0 && "MOVE out of bounds");
+  }
+
   auto fromLocation = board[move->from.y][move->from.x];
   auto toLocation = board[move->to.y][move->to.x];
 
@@ -394,11 +395,12 @@ ChessMove *Board::undoMove() {
 bool Board::isMoveWithinBounds(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
+  const int size = BOARD_SIZE - 1;
 
-  if (BOARD_SIZE <= fromX || BOARD_SIZE <= fromY)
+  if (size <= fromX || size <= fromY)
     return false;
 
-  if (BOARD_SIZE <= toX || BOARD_SIZE <= toY)
+  if (size <= toX || size <= toY)
     return false;
 
   return true;
