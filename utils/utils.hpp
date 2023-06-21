@@ -11,3 +11,4 @@ vector<string> splitString(string str, const char delem);
 string serializeBoardToJson(const Cell *board);
 
 } // namespace chex
+

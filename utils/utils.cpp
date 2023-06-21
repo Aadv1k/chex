@@ -35,18 +35,17 @@ string serializeBoardToJson(const Cell *board) {
   return serializedJson;
 }
 
-    vector<string> splitString(const string& str, const char delim) {
-        vector<string> tokens;
-        string::size_type start = 0;
-        string::size_type end = str.find(delim);
-
-        while (end != string::npos) {
-            tokens.push_back(str.substr(start, end - start));
-            start = end + 1;
-            end = str.find(delim, start);
-        }
-
-        tokens.push_back(str.substr(start));
-        return tokens;
+vector<string> splitString(string str, const char delem) {
+  vector<string> tokens;
+  for (int i = 0; i < str.length(); i++) {
+    string::size_type idx = str.find(delem);
+    if (idx < 0) {
+      tokens.push_back(str);
+      return tokens;
     }
+    tokens.push_back(str.substr(i, idx));
+    i += idx;
+  }
+  return tokens;
+}
 } // namespace chex

@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -std=c++17
+CFLAGS = -Wall -Wextra -std=c++17 -Wno-type-limits -Wno-sign-compare 
 CXX = g++
 CMD := $(CXX) $(CFLAGS)
 
