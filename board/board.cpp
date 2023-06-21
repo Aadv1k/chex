@@ -380,9 +380,6 @@ MoveValidity Board::isKingMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
-  const auto fromPiece = board[fromY][fromX].piece;
-  const auto toPiece = board[toY][toX].piece;
-
   const int diffX = abs(toX - fromX);
   const int diffY = abs(toY - fromY);
 

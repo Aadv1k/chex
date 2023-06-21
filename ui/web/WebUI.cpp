@@ -28,7 +28,7 @@ namespace chex {
       res.set_content(serializeBoardToJson(game.getBoard()), "application/json");
     });
 
-    server.Get("/undo", [this](const httplib::Request &req, httplib::Response &res) {
+    server.Get("/undo", [this](const httplib::Request &, httplib::Response &res) {
       game.undoMove();
       res.status = 200;
       res.set_content("done", "text/plain");
