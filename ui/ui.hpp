@@ -7,7 +7,7 @@ namespace chex {
 class BaseUI {
 public:
   Game game;
-  virtual void render() = 0;
+  virtual void render(const int port = 8080) = 0;
 };
 
 } // namespace chex

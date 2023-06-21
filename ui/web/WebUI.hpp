@@ -7,14 +7,12 @@
 #include <iostream>
 #include <string>
 
-#define HTTP_PORT 8000
-
 using std::cout, std::string;
 
 namespace chex {
   class WebUI : public BaseUI {
     public:
-      void render() override;
+      void render(const int port = 8080) override;
   };
 }
 

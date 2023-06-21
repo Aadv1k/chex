@@ -5,7 +5,7 @@
 #include "../../utils/utils.hpp"
 
 namespace chex {
-  void WebUI::render() {
+  void WebUI::render(const int port) {
     httplib::Server server;
 
     server.Get("/", [](const httplib::Request &, httplib::Response &res) {
@@ -68,9 +68,7 @@ namespace chex {
     });
 
 
-
-
-    cout << "server listening on " << "http://localhost:" << HTTP_PORT << "\n";
-    server.listen("0.0.0.0", HTTP_PORT);
+    cout << "server listening on " << "http://localhost:" << port << "\n";
+    server.listen("0.0.0.0", port);
   }
 }
