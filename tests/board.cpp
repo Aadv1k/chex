@@ -28,8 +28,8 @@ int main() {
   b.print();
   std::cout << "\n";
 
-
-  std::cout << "ILLEGAL BISHOP MOVE" << "\n";
+  std::cout << "ILLEGAL BISHOP MOVE"
+            << "\n";
   ChessMove move5 = {.from = {5, 0}, .to = {0, 4}};
   b.makeMove(&move5);
   b.print();

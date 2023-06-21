@@ -1,39 +1,43 @@
-# chex
+```
+           /$$
+          | $$                          
+  /$$$$$$$| $$$$$$$   /$$$$$$  /$$   /$$
+ /$$_____/| $$__  $$ /$$__  $$|  $$ /$$/
+| $$      | $$  \ $$| $$$$$$$$ \  $$$$/ 
+| $$      | $$  | $$| $$_____/  >$$  $$ 
+|  $$$$$$$| $$  | $$|  $$$$$$$ /$$/  $$
+ \_______/|__/  |__/ \_______/|__/  \__/
+```
 
-**In active development**
+**In active development** The homegrown chess engine in C++
 
-A chess engine built using C++
+## Usage
+
+```shell
+$ chex help
+
+Usage:
+	./bin/chex web --port 8000
+Commands:
+	web         Start Chex on a local web server
+	help        Print this help message
+Options:
+	--port, -p  Specify the port for the server (default: 8080)
+```
 
 ## Build
 
-### Unix-Like
+We use [make](https://www.gnu.org/software/make/) to build the source
 
-This will clean up and build chex
-
-```shell
-make all 
 ```
-
-### Windows
-
-Good ol' MS-DOS being MS-DOS
-
-```shell
-make chex_win32
-```
-
-run the clean up after or it will fail
-
-```shell
-make clean_win32
+make chex
+make clean
 ```
 
 ## Test
 
 ```shell
-make engine/tests
-./bin/engine.test
+make chex/tests
+./bin/chex.test
 ```
 
-## TODO
-- [X] Fix the implementation for the knight validity check

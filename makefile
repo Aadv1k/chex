@@ -1,56 +1,62 @@
-CFLAGS = -Wall -Wextra -std=c++17 
-CC = g++
-CMD := $(CC) $(CFLAGS)
+CFLAGS = -Wall -Wextra -std=c++17
+CXX = g++
+CMD := $(CXX) $(CFLAGS)
 
-board_files := ./board/board.o
-game_files := ./game/game.o
-ui_files := ./ui/web/WebUI.o
-utils := ./utils/utils.o
-main := ./main.o
+board_files := board/board.o
+game_files := game/game.o
+ui_files := ui/web/WebUI.o
+utils := utils/utils.o
+main := main.o
 
-chex_files := $(board_files) $(game_files) $(utils) $(main) $(ui_files)
+BUILD_DIR = bin
+
+chex_files := $(board_files) $(game_files) $(utils) $(main) $(ui_files) 
+tests := $(wildcard ./tests/*) $(board_files)
+
+ifeq ($(OS),Windows_NT)
 
 chex: $(chex_files)
-	mkdir -p bin
-	$(CMD) $(chex_files) -o ./bin/chex
+	IF NOT EXIST ./$(BUILD_DIR) MKDIR $(BUILD_DIR)
+	$(CMD) -lws2_32 $(chex_files) -o .\$(BUILD_DIR)\chex.exe
 
-chex/main: main.cpp
-	$(CMD) -c ./main.cpp
+clean:
+	IF EXIST $(BUILD_DIR) RMDIR /S /Q $(BUILD_DIR)
+	IF EXIST *.o DEL /S /Q *.o
+else
 
-utils: ./utils/utils.cpp ./engine/utils.hpp
-	$(CMD) ./engine/utils.cpp
+chex: $(chex_files)
+	mkdir -p $(BUILD_DIR)
+	$(CMD) $(chex_files) -o ./$(BUILD_DIR)/chex
 
-chex/board: ./board/board.cpp ./board/board.hpp
-	$(CMD) -c ./board/board.cpp 
+clean:
+	rm -rf $(chex_files)
+	rm -rf ./tests/*.o
+endif
 
-chex/board/tests:
-	$(CMD) ./tests/board.cpp ./board/board.cpp -o ./bin/board.tests
 
-chex/game: ./game/game.cpp ./game/game.hpp
-	$(CMD) -c ./game/game.cpp  -o ./game/game.o
+chex/tests:
+	$(CMD) $(tests) -o ./$(BUILD_DIR)/chex.test
 
-chex/ui/web: ./ui/web/WebUI.hpp ./ui/web/WebUI.cpp ./ui/web/index.h
-	$(CMD) -c ./ui/web/WebUI.cpp -o ./ui/web/WebUI.o
+$(main): main.cpp
+	$(CMD) -c $(CFLAGS) $< -o $@
+
+$(utils): utils/utils.cpp utils/utils.hpp
+	$(CMD) -c $(CFLAGS) $< -o $@
+
+$(board_files): board/board.cpp board/board.hpp
+	$(CMD) -c $(CFLAGS) $< -o $@
+
+$(game_files): game/game.cpp game/game.hpp
+	$(CMD) -c $(CFLAGS) $< -o $@
+
+$(ui_files): ui/web/WebUI.cpp ui/web/WebUI.hpp ui/web/index.h
+	$(CMD) -c $(CFLAGS) $< -o $@
 
 format:
 	clang-format -i ./**/*.cpp
 	clang-format -i ./**/*.hpp
 
-all: clean chex
+all: chex
 
-clean_win32:
-	DEL /Q /F /S .\src\*.o
-	DEL /Q /F /S .\utils\*.o
-	RD /S /Q .\bin
+.PHONY: format all clean clean_win32
 
-engine_win32: $(engine_files)
-	if not exist "bin" then mkdir bin
-	$(CMD) $(engine_files) -o ./bin/engine.exe
-
-all_win32: clean_win32 engine_win32 
-
-clean: 
-	rm -rf $(chex_files)
-	rm -rf ./tests/**/*.o
-	rm -rf ./utils/*.o
-	rm -rf ./bin
