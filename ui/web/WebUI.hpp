@@ -2,11 +2,13 @@
 #define WEBUI_HPP
 
 #include "../ui.hpp"
-#include "../../lib/httplib.h"
+#include <cassert>
 
 #ifdef _WIN32
-    #include <winsock2.h>
-    #include <windows.h>
+    #define CHEX_ON_WINDOWS
+#else
+    #define CHEX_ON_UNIX
+    #include "../../lib/httplib.h"
 #endif
 
 

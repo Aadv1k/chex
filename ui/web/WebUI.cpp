@@ -1,10 +1,12 @@
 #include "./WebUI.hpp"
-
 #include "./index.h" 
-
 #include "../../utils/utils.hpp"
 
+
 namespace chex {
+
+#ifdef CHEX_ON_UNIX
+
   void WebUI::render(const int port) {
     httplib::Server server;
 
@@ -13,13 +15,10 @@ namespace chex {
     });
 
     server.Get("/style.css", [this](const httplib::Request &, httplib::Response &res) {
-
       res.set_content(STYLE_CSS, "text/css");
     });
 
-
     server.Get("/script.js", [this](const httplib::Request &, httplib::Response &res) {
-
       res.set_content(SCRIPT_JS, "text/javascript");
     });
 
@@ -67,8 +66,16 @@ namespace chex {
       }
     });
 
-
     cout << "server listening on " << "http://localhost:" << port << "\n";
     server.listen("0.0.0.0", port);
   }
+
+#else
+
+  void WebUI::render(const int port) {
+    assert(0 && "for windows not implemented");
+  }
+
+#endif
+ 
 }
