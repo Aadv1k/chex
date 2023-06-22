@@ -280,7 +280,7 @@ MoveValidity Board::isRookMoveValid(ChessMove *move) {
   const auto fromPiece = board[fromY][fromX].piece;
   const auto toPiece = board[toY][toX].piece;
 
-  if (fromPiece->color == toPiece->color) {
+  if (toPiece && fromPiece->color == toPiece->color) {
     return MoveValidity::Betrayal;
   }
 
@@ -331,7 +331,7 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   const auto fromPiece = board[fromY][fromX].piece;
   const auto toPiece = board[toY][toX].piece;
 
-  if (fromPiece->color == toPiece->color) {
+  if (toPiece && fromPiece->color == toPiece->color) {
     return MoveValidity::Betrayal;
   }
 
@@ -359,26 +359,30 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
 }
 
 MoveValidity Board::isQueenMoveValid(ChessMove *move) {
+
   const MoveValidity pawnMove = isPawnMoveValid(move);
-  std::cout << "checked pawn queen move\n";
   const MoveValidity rookMove = isRookMoveValid(move);
-  std::cout << "checked r queen move\n";
   const MoveValidity bishopMove = isBishopMoveValid(move);
-  std::cout << "checked b queen move\n";
 
-  if (bishopMove != MoveValidity::LegalMove)
-    return bishopMove;
-  if (pawnMove != MoveValidity::LegalMove)
-    return pawnMove;
-  if (rookMove != MoveValidity::LegalMove)
-    return rookMove;
+  if (
+      (pawnMove == MoveValidity::LegalMove) ||
+      (bishopMove == MoveValidity::LegalMove) || 
+      (rookMove == MoveValidity::LegalMove)
+      ) return MoveValidity::LegalMove;
 
-  return MoveValidity::LegalMove;
+  return MoveValidity::IllegalMove;
 }
 
 MoveValidity Board::isKingMoveValid(ChessMove *move) {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
+
+  const auto fromPiece = board[fromY][fromX].piece;
+  const auto toPiece = board[toY][toX].piece;
+
+  if (toPiece && fromPiece->color == toPiece->color) {
+    return MoveValidity::Betrayal;
+  }
 
   const int diffX = abs(toX - fromX);
   const int diffY = abs(toY - fromY);
