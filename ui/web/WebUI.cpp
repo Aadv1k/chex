@@ -85,7 +85,35 @@ namespace chex {
       } else if (mg_http_match_uri(hm, "/board")) {
         mg_http_reply(c, 200, "Content-Type: application/json\r\n", serializeBoardToJson(game.getBoard()).c_str(), MG_ESC("status"), 1);
       } else if (mg_http_match_uri(hm, "/move")) {
-        assert(false && "/move not implemented");
+
+        string query = string(hm->query.ptr).substr(0, hm->query.len);
+
+        vector<string> vec1 = splitString(query, '=');
+
+        vector<string> split = splitString(vec1[1], '.');
+        vector<string> from = splitString(split[0], '-');
+        vector<string> to = splitString(split[1], '-');
+
+
+        ChessMove move = {
+          .from = {
+            .x = stoi(from[0]),
+            .y = stoi(from[1])
+          },
+          .to = {
+            .x = stoi(to[0]),
+            .y = stoi(to[1])
+          }
+        };
+
+        MoveValidity valid = game.validateMove(&move);
+
+        if (valid != MoveValidity::LegalMove) {
+          mg_http_reply(c, 200, "Content-Type: text/plain\r\n", "bad move", MG_ESC("status"), 1);
+          return;
+        }
+        game.makeMove(&move);
+        mg_http_reply(c, 200, "Content-Type: text/plain\r\n", "done", MG_ESC("status"), 1);
       } else {
         struct mg_http_serve_opts opts = {
           .root_dir = ".",
