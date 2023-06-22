@@ -364,11 +364,9 @@ MoveValidity Board::isQueenMoveValid(ChessMove *move) {
   const MoveValidity rookMove = isRookMoveValid(move);
   const MoveValidity bishopMove = isBishopMoveValid(move);
 
-  if (
-      (pawnMove == MoveValidity::LegalMove) ||
-      (bishopMove == MoveValidity::LegalMove) || 
-      (rookMove == MoveValidity::LegalMove)
-      ) return MoveValidity::LegalMove;
+  if ((pawnMove == MoveValidity::LegalMove) || (bishopMove == MoveValidity::LegalMove) ||
+      (rookMove == MoveValidity::LegalMove))
+    return MoveValidity::LegalMove;
 
   return MoveValidity::IllegalMove;
 }

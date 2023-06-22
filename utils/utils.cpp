@@ -35,7 +35,7 @@ string serializeBoardToJson(const Cell *board) {
   return serializedJson;
 }
 
-std::vector<std::string> splitString(const std::string& str, char delimiter) {
+std::vector<std::string> splitString(const std::string &str, char delimiter) {
   std::vector<std::string> tokens;
   std::stringstream ss(str);
   std::string token;
@@ -45,19 +45,19 @@ std::vector<std::string> splitString(const std::string& str, char delimiter) {
   return tokens;
 }
 
-  /*
+/*
 vector<string> splitString(string str, const char delem) {
-  vector<string> tokens;
-  for (int i = 0; i < str.length(); i++) {
-    string::size_type idx = str.find(delem);
-    if (idx < 0) {
-      tokens.push_back(str);
-      return tokens;
-    }
-    tokens.push_back(str.substr(i, idx));
-    i += idx;
+vector<string> tokens;
+for (int i = 0; i < str.length(); i++) {
+  string::size_type idx = str.find(delem);
+  if (idx < 0) {
+    tokens.push_back(str);
+    return tokens;
   }
-  return tokens;
+  tokens.push_back(str.substr(i, idx));
+  i += idx;
+}
+return tokens;
 }*/
 
 } // namespace chex

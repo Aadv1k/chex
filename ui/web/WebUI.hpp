@@ -22,11 +22,12 @@ namespace chex {
   class WebUI : public BaseUI {
     public:
       void render(const int port = 8080) override;
- #ifdef _WIN32
+#ifdef _WIN32
     private:
       void http_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data);
-  };
- #endif
+#endif
+
+};
 }
 
 #endif
