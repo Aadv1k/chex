@@ -6,7 +6,7 @@ BUILD_DIR := bin
 SRC_DIR := .
 OBJ_DIR := obj
 
-SRC_DIRS := $(SRC_DIR) board game ui/web utils lib
+SRC_DIRS := $(SRC_DIR) board game ui/web utils lib ui/console
 SRC_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 TEST_FILES := $(wildcard tests/*.cpp)

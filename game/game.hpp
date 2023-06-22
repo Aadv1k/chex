@@ -17,8 +17,6 @@ public:
   void makeMove(ChessMove *move);
   void undoMove();
   Cell *getBoard();
-
-private:
   Board chessBoard;
 };
 } // namespace chex

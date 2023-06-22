@@ -1,5 +1,6 @@
 #include "./board/board.hpp"
 #include "./ui/web/WebUI.hpp"
+#include "./ui/console/ConsoleUI.hpp"
 #include <cstring>
 #include <iostream>
 
@@ -22,8 +23,9 @@ void usage(const char *target) {
   printf("Usage:\n");
   printf("\t%s web --port 8000\n", target);
   printf("Commands:\n");
-  printf("\tweb         Start Chex on a local web server\n");
-  printf("\thelp        Print this help message\n");
+  printf("\tweb             Start Chex on a local web server\n");
+  printf("\tconsole         Start Chex as a text-based game\n");
+  printf("\thelp            Print this help message\n");
   printf("Options:\n");
   printf("\t--port, -p  Specify the port for the server (default: 8080)\n");
   exit(1);
@@ -36,6 +38,7 @@ int main(int argc, char **argv) {
   }
 
   bool web_mode = false;
+  bool console_mode = false;
   int port = 8080;
 
   for (int i = 1; i < argc; ++i) {
@@ -53,6 +56,8 @@ int main(int argc, char **argv) {
         fprintf(stderr, "[error] port must be valid integer got %s\n", argv[i]);
         exit(1);
       }
+    } else if (strcmp(argv[i], "console") == 0) {
+      console_mode = true;
     } else {
       usage(argv[0]);
     }
@@ -61,6 +66,9 @@ int main(int argc, char **argv) {
   if (web_mode) {
     WebUI wui;
     wui.render(port);
+  } else if (console_mode) {
+    ConsoleUI cui;
+    cui.render();
   } else {
     fprintf(stderr, "[warn] no mode was specified!\n");
     exit(1);
