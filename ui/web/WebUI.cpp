@@ -71,10 +71,50 @@ namespace chex {
   }
 
 #else
+  void WebUI::http_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
+    (void)fn_data;
 
-  void WebUI::render(const int port) {
-    assert(0 && "for windows not implemented");
+    if (ev == MG_EV_HTTP_MSG) {
+      struct mg_http_message *hm = (struct mg_http_message *) ev_data;
+      if (mg_http_match_uri(hm, "/")) {
+        mg_http_reply(c, 200, "Content-Type: text/html\r\n", INDEX_HTML, MG_ESC("status"), 1);
+      } else if (mg_http_match_uri(hm, "/style.css")) {
+        mg_http_reply(c, 200, "Content-Type: text/css\r\n", STYLE_CSS, MG_ESC("status"), 1);
+      } else if (mg_http_match_uri(hm, "/script.js")) {
+        mg_http_reply(c, 200, "Content-Type: text/javascript\r\n", SCRIPT_JS, MG_ESC("status"), 1);
+      } else if (mg_http_match_uri(hm, "/board")) {
+        mg_http_reply(c, 200, "Content-Type: application/json\r\n", serializeBoardToJson(game.getBoard()).c_str(), MG_ESC("status"), 1);
+      } else if (mg_http_match_uri(hm, "/move")) {
+        assert(false && "/move not implemented");
+      } else {
+        struct mg_http_serve_opts opts = {
+          .root_dir = ".",
+          .ssi_pattern = NULL,
+          .extra_headers = NULL,
+          .mime_types = NULL,
+          .page404 = NULL,
+          .fs = NULL
+        };
+        mg_http_serve_dir(c, hm, &opts);
+      }
+    }
   }
+
+void WebUI::render(const int port) {
+  struct mg_mgr mgr;
+  mg_mgr_init(&mgr);
+
+  std::string listen_addr = "http://localhost:" + std::to_string(port);
+  std::cout << "Server listening on " << listen_addr << "\n";
+
+  auto http_handler_wrapper = [](struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
+    static_cast<WebUI*>(fn_data)->http_handler(c, ev, ev_data, fn_data);
+  };
+
+  mg_http_listen(&mgr, listen_addr.c_str(), http_handler_wrapper, this);
+
+  for (;;) mg_mgr_poll(&mgr, 1000);
+}
 
 #endif
  

@@ -6,29 +6,41 @@ BUILD_DIR := bin
 SRC_DIR := .
 OBJ_DIR := obj
 
-SRC_DIRS := $(SRC_DIR) board game ui/web utils
+SRC_DIRS := $(SRC_DIR) board game ui/web utils lib
 SRC_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 TEST_FILES := $(wildcard tests/*.cpp)
 
-ifeq ($(OS),Windows_NT)
-MKDIR_P := mkdir
-RM := rmdir /s /q
-DEL := del /s /q
-EXE_EXT := .exe
-else
-MKDIR_P := mkdir -p
-RM := rm -rf
-DEL := rm -rf
-EXE_EXT :=
-endif
+ifeq ($(OS),Windows_NT) # ON WINDOWS
 
 chex: $(OBJ_FILES)
-	$(MKDIR_P) $(BUILD_DIR)
-	$(CMD) $(OBJ_FILES) -o $(BUILD_DIR)/chex$(EXE_EXT)
+	IF NOT EXIST $(BUILD_DIR) MKDIR $(BUILD_DIR) 
+	$(CMD) $(OBJ_FILES) -lws2_32 -o $(BUILD_DIR)/chex.exe
+
+clean:
+	IF EXIST $(BUILD_DIR) RMDIR /S /Q $(BUILD_DIR)
+	IF EXIST $(OBJ_DIR) RMDIR /S /Q $(OBJ_DIR)
+
+else # ON UNIX
+
+chex: $(OBJ_FILES)
+	mkdir -p $(BUILD_DIR)
+	$(CMD) $(OBJ_FILES) -o $(BUILD_DIR)/chex
+
+clean:
+	rm -rf */*.o
+	rm -rf $(BUILD_DIR) $(OBJ_DIR)
+
+endif
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(MKDIR_P) $(OBJ_DIR)
+
+ifeq ($(OS),Windows_NT) 
+	IF NOT EXIST $(OBJ_DIR) MKDIR $(OBJ_DIR) 
+else
+	mkdir -p $(OBJ_DIR)
+endif
+
 	$(CMD) -c $(CFLAGS) $< -o $@
 
 chex/tests: $(TEST_FILES) $(OBJ_FILES)
@@ -37,12 +49,6 @@ chex/tests: $(TEST_FILES) $(OBJ_FILES)
 
 format:
 	clang-format -i $(SRC_FILES) $(wildcard */*.hpp)
-
-clean:
-	$(RM) $(OBJ_DIR)
-	$(RM) $(BUILD_DIR)
-	$(DEL) $(SRC_DIR)/*.o
-	$(DEL) tests/*.o
 
 all: chex
 
