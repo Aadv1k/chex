@@ -1,8 +1,5 @@
 #include "./ConsoleUI.hpp"
 #include <cstdlib>
-
-
-
 namespace chex {
 
 void clearScreen() {
@@ -14,20 +11,29 @@ void clearScreen() {
 }
 
 void help() {
-    printf("board    -- print the current board\n");
-    printf("help     -- print this help message\n");
-    printf("quit     -- quit the game\n");
-    printf("move     -- make a move\n");
-    printf("cls      -- clear the screen\n");
+    printf("board               print the current board\n");
+    printf("move <pos> <pos>    make a move\n");
+    printf("cls                 clear the screen\n");
+    printf("quit                quit the game\n");
+    printf("help                print this help message\n");
 }
 
 void welcome() {
-  printf("\n\tWelcome to Chex::ConsoleUI! type `help` to see the list of commands\n");
+  printf("\n\tWelcome to Chex::ConsoleUI! type `help` to see the list of commands\n\n");
 }
 
 void ConsoleUI::printBoard() {
   for (int i = 0; i < BOARD_SIZE; i++) {
+    if (i == 0) {
+      std::cout << "  1 2 3 4 5 6 7 8\n";
+    }
+
     for (int j = 0; j < BOARD_SIZE; j++) {
+
+      if (j == 0) {
+        std::cout << static_cast<char>('a' + i) << " ";
+      }
+
       if (game.chessBoard.board[i][j].state == CellState::FILLED) {
         const ChessPiece *piece = game.chessBoard.board[i][j].piece;
         std::string pieceSymbol;
@@ -81,6 +87,8 @@ void ConsoleUI::printBoard() {
       std::cout << "> ";
       std::getline(std::cin, command);
 
+      command = trim(command);
+
       if (command == "quit") {
         running = false;
       } else if (command == "help") {
@@ -89,7 +97,11 @@ void ConsoleUI::printBoard() {
         printBoard();
       } else if (command == "cls") {
         clearScreen();
-      }
+      } else if (command.substr(0, 4) == "move") {
+        std::cout << command << "\n";
+      } else {
+        std::cout << "invalid command `" << command << "` type `help` for info\n";
+      } 
     }
-}
   }
+}

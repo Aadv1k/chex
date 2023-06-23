@@ -2,6 +2,7 @@
 #define CONSOLEUI_HPP
 
 #include "../ui.hpp"
+#include "../../utils/utils.hpp"
 #include <cassert>
 
 #include <iostream>
