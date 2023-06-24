@@ -1,0 +1,45 @@
+<pre><code>           /$$
+          | $$                          
+  /$$$$$$$| $$$$$$$   /$$$$$$  /$$   /$$
+ /$$_____/| $$__  $$ /$$__  $$|  $$ /$$/
+| $$      | $$  \ $$| $$$$$$$$ \  $$$$/ 
+| $$      | $$  | $$| $$_____/  &gt;$$  $$ 
+|  $$$$$$$| $$  | $$|  $$$$$$$ /$$/  $$
+ \_______/|__/  |__/ \_______/|__/  \__/
+</code></pre>
+<p>The homegrown chess engine in C++.</p>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#the-engine">The engine</a></li>
+</ul>
+<h2 id="the-engine">The engine</h2>
+<p>The engine is aimed to be <strong>modular</strong>, hence here is a structure of the project </p>
+<p><img src="./docs/the-layers.svg" alt="img"></p>
+<h3 id="features">Features</h3>
+<h2 id="usage">Usage</h2>
+<pre><code class="language-shell">$ chex help
+
+Usage:
+        ./bin/chex web --port 8000
+        ./bin/chex console
+Commands:
+        web             Start Chex on a local web server
+        console         Start Chex as a text-based game
+        help            Print this help message
+Options:
+        --port, -p  Specify the port for the server (default: 8080)```
+
+## Build
+
+We use [make](https://www.gnu.org/software/make/) to build the source
+</code></pre>
+<p>make chex
+make clean</p>
+<pre><code>
+## Test
+
+```shell
+make chex/tests
+./bin/chex.test
+</code></pre>
+
