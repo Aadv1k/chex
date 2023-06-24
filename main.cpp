@@ -1,6 +1,6 @@
 #include "./board/board.hpp"
-#include "./ui/web/WebUI.hpp"
 #include "./ui/console/ConsoleUI.hpp"
+#include "./ui/web/WebUI.hpp"
 #include <cstring>
 #include <iostream>
 
@@ -22,6 +22,7 @@ void graphic() {
 void usage(const char *target) {
   printf("Usage:\n");
   printf("\t%s web --port 8000\n", target);
+  printf("\t%s console\n", target);
   printf("Commands:\n");
   printf("\tweb             Start Chex on a local web server\n");
   printf("\tconsole         Start Chex as a text-based game\n");

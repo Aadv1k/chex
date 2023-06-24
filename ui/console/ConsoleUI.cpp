@@ -4,22 +4,22 @@
 namespace chex {
 
 void clearScreen() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+#ifdef _WIN32
+  system("cls");
+#else
+  system("clear");
+#endif
 }
 
 void help() {
-    printf("\n-----------------------------------------------------\n");
-    printf("                  Available commands\n");
-    printf("-----------------------------------------------------\n\n");
-    printf("   - board: Print the current state of the chessboard.\n");
-    printf("   - move <pos> <pos>: Make a move by specifying the starting and ending positions.\n");
-    printf("   - cls: Clear the screen.\n");
-    printf("   - quit: Quit the game.\n");
-    printf("   - help: Display this help message.\n");
+  printf("\n-----------------------------------------------------\n");
+  printf("                  Available commands\n");
+  printf("-----------------------------------------------------\n\n");
+  printf("   - board: Print the current state of the chessboard.\n");
+  printf("   - move <pos> <pos>: Make a move by specifying the starting and ending positions.\n");
+  printf("   - cls: Clear the screen.\n");
+  printf("   - quit: Quit the game.\n");
+  printf("   - help: Display this help message.\n");
 }
 
 void welcome() {
@@ -30,10 +30,10 @@ void welcome() {
 }
 
 void ConsoleUI::printBoard() {
-  std::cout <<  "\n";
+  std::cout << "\n";
 
   for (int i = 0; i < BOARD_SIZE; i++) {
-    std::cout <<  "  ";
+    std::cout << "  ";
     for (int j = 0; j < BOARD_SIZE; j++) {
       if (j == 0) {
         std::cout << i + 1 << " ";
@@ -75,8 +75,6 @@ void ConsoleUI::printBoard() {
       } else {
         std::cout << "- ";
       }
-
-
     }
     std::cout << std::endl;
     if (i == BOARD_SIZE - 1) {
@@ -87,13 +85,13 @@ void ConsoleUI::printBoard() {
 
 void ConsoleUI::render(const int port) {
   (void)port;
-  
+
   bool running = true;
   std::string command;
-  
+
   clearScreen();
   welcome();
-  
+
   while (running) {
     PieceColor currentPlayer = PieceColor::WHITE;
     printf("%s turn> ", currentPlayer == PieceColor::WHITE ? "white's" : "black's");
@@ -121,33 +119,24 @@ void ConsoleUI::render(const int port) {
         printf("Error: Invalid command. Please specify both the starting and ending positions.\n");
         continue;
       }
-      
+
       std::string from = split[1];
       std::string to = split[2];
-      
+
       try {
         int toY = std::stoi(to.substr(1));
         int toX = static_cast<int>(to[0]) - 'a' + 1;
-        
+
         int fromY = std::stoi(from.substr(1));
         int fromX = static_cast<int>(from[0]) - 'a' + 1;
-        
-        if ((toX > BOARD_SIZE || toY > BOARD_SIZE) ||
-            (fromX > BOARD_SIZE || fromY > BOARD_SIZE)) {
+
+        if ((toX > BOARD_SIZE || toY > BOARD_SIZE) || (fromX > BOARD_SIZE || fromY > BOARD_SIZE)) {
           printf("Error: Invalid notation. Positions are out of range.\n");
           continue;
         }
 
-        ChessMove move = {
-          .from = {
-            .x = fromX - 1,
-            .y = fromY - 1
-          },
-          .to = {
-            .x = toX - 1,
-            .y = toY - 1
-          }
-        };
+        ChessMove move = {.from = {.x = fromX - 1, .y = fromY - 1},
+                          .to = {.x = toX - 1, .y = toY - 1}};
 
         if (game.validateMove(&move) != MoveValidity::LegalMove) {
           printf("Illegal move!\n");
@@ -159,8 +148,9 @@ void ConsoleUI::render(const int port) {
         printBoard();
         currentPlayer = currentPlayer == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE;
 
-      } catch (const std::exception& e) {
-        printf("Error: Invalid command. Please use the standard chess notation.\nExample: move e3 e4\n");
+      } catch (const std::exception &e) {
+        printf("Error: Invalid command. Please use the standard chess notation.\nExample: move e3 "
+               "e4\n");
         continue;
       }
     } else {

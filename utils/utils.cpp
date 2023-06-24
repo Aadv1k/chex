@@ -51,6 +51,4 @@ string trim(const string str) {
   return ret.substr(ret.find_first_not_of(' '), ret.find_last_not_of(' ') + 1);
 }
 
-
-
 } // namespace chex

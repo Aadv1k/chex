@@ -9,7 +9,7 @@
  \_______/|__/  |__/ \_______/|__/  \__/
 ```
 
-**In active development** The homegrown chess engine in C++
+The homegrown chess engine in C++
 
 ## Usage
 
@@ -17,13 +17,14 @@
 $ chex help
 
 Usage:
-	./bin/chex web --port 8000
+        ./bin/chex web --port 8000
+        ./bin/chex console
 Commands:
-	web         Start Chex on a local web server
-	help        Print this help message
+        web             Start Chex on a local web server
+        console         Start Chex as a text-based game
+        help            Print this help message
 Options:
-	--port, -p  Specify the port for the server (default: 8080)
-```
+        --port, -p  Specify the port for the server (default: 8080)```
 
 ## Build
 
