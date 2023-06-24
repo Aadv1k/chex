@@ -45,19 +45,12 @@ std::vector<std::string> splitString(const std::string &str, char delimiter) {
   return tokens;
 }
 
-/*
-vector<string> splitString(string str, const char delem) {
-vector<string> tokens;
-for (int i = 0; i < str.length(); i++) {
-  string::size_type idx = str.find(delem);
-  if (idx < 0) {
-    tokens.push_back(str);
-    return tokens;
-  }
-  tokens.push_back(str.substr(i, idx));
-  i += idx;
+/* simple but workrs for our case */
+string trim(const string str) {
+  string ret = str;
+  return ret.substr(ret.find_first_not_of(' '), ret.find_last_not_of(' ') + 1);
 }
-return tokens;
-}*/
+
+
 
 } // namespace chex
