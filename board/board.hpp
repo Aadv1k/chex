@@ -6,7 +6,7 @@
 #include <stack>
 #include <string>
 
-#define BOARD_SIZE 8
+static constexpr int BOARD_SIZE = 8;
 
 namespace chex {
 
@@ -18,26 +18,26 @@ enum MoveValidity { OutOfBoundsMove, IllegalMove, PieceMismatch, LegalMove, Betr
 
 enum CellState { EMPTY, FILLED };
 
-typedef struct {
+struct Vec2i {
   int x;
   int y;
-} Vec2i;
+};
 
-typedef struct {
+struct ChessPiece {
   PieceType type;
   PieceColor color;
   Vec2i position;
-} ChessPiece;
+};
 
-typedef struct {
+struct ChessMove {
   Vec2i from;
   Vec2i to;
-} ChessMove;
+};
 
-typedef struct {
+struct Cell {
   CellState state;
   ChessPiece *piece;
-} Cell;
+};
 
 class Board {
 public:
@@ -46,7 +46,7 @@ public:
   Board();
   ~Board();
 
-  MoveValidity validateMove(ChessMove *move);
+  MoveValidity validateMove(ChessMove *move) const;
   void makeMove(ChessMove *move);
   void undoMove();
   void print();
@@ -58,14 +58,14 @@ private:
 
   PieceColor currentPlayer;
 
-  bool isMoveWithinBounds(ChessMove *move);
+  bool isMoveWithinBounds(ChessMove *move) const;
   void setCellToCell(Vec2i from, Vec2i to);
-  MoveValidity isPawnMoveValid(ChessMove *move);
-  MoveValidity isRookMoveValid(ChessMove *move);
-  MoveValidity isBishopMoveValid(ChessMove *move);
-  MoveValidity isKnightMoveValid(ChessMove *move);
-  MoveValidity isQueenMoveValid(ChessMove *move);
-  MoveValidity isKingMoveValid(ChessMove *move);
+  MoveValidity isPawnMoveValid(ChessMove *move) const;
+  MoveValidity isRookMoveValid(ChessMove *move) const;
+  MoveValidity isBishopMoveValid(ChessMove *move) const;
+  MoveValidity isKnightMoveValid(ChessMove *move) const;
+  MoveValidity isQueenMoveValid(ChessMove *move) const;
+  MoveValidity isKingMoveValid(ChessMove *move) const;
 };
 
 } // namespace chex

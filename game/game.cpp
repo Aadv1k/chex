@@ -3,7 +3,7 @@
 namespace chex {
 void Game::makeMove(ChessMove *move) { chessBoard.makeMove(move); }
 
-MoveValidity Game::validateMove(ChessMove *move) { return chessBoard.validateMove(move); }
+MoveValidity Game::validateMove(ChessMove *move) const { return chessBoard.validateMove(move); }
 
 void Game::undoMove() { chessBoard.undoMove(); }
 

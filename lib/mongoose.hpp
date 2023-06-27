@@ -25,19 +25,19 @@
 extern "C" {
 #endif
 
-#define MG_ARCH_CUSTOM 0       // User creates its own mongoose_custom.h
-#define MG_ARCH_UNIX 1         // Linux, BSD, Mac, ...
-#define MG_ARCH_WIN32 2        // Windows
-#define MG_ARCH_ESP32 3        // ESP32
-#define MG_ARCH_ESP8266 4      // ESP8266
-#define MG_ARCH_FREERTOS 5     // FreeRTOS
-#define MG_ARCH_AZURERTOS 6    // MS Azure RTOS
-#define MG_ARCH_ZEPHYR 7       // Zephyr RTOS
-#define MG_ARCH_NEWLIB 8       // Bare metal ARM
-#define MG_ARCH_CMSIS_RTOS1 9  // CMSIS-RTOS API v1 (Keil RTX)
-#define MG_ARCH_TIRTOS 10      // Texas Semi TI-RTOS
-#define MG_ARCH_RP2040 11      // Raspberry Pi RP2040
-#define MG_ARCH_ARMCC 12       // Keil MDK-Core with Configuration Wizard
+#define MG_ARCH_CUSTOM 0 // User creates its own mongoose_custom.h
+#define MG_ARCH_UNIX 1 // Linux, BSD, Mac, ...
+#define MG_ARCH_WIN32 2 // Windows
+#define MG_ARCH_ESP32 3 // ESP32
+#define MG_ARCH_ESP8266 4 // ESP8266
+#define MG_ARCH_FREERTOS 5 // FreeRTOS
+#define MG_ARCH_AZURERTOS 6 // MS Azure RTOS
+#define MG_ARCH_ZEPHYR 7 // Zephyr RTOS
+#define MG_ARCH_NEWLIB 8 // Bare metal ARM
+#define MG_ARCH_CMSIS_RTOS1 9 // CMSIS-RTOS API v1 (Keil RTX)
+#define MG_ARCH_TIRTOS 10 // Texas Semi TI-RTOS
+#define MG_ARCH_RP2040 11 // Raspberry Pi RP2040
+#define MG_ARCH_ARMCC 12 // Keil MDK-Core with Configuration Wizard
 #define MG_ARCH_CMSIS_RTOS2 13 // CMSIS-RTOS API v2 (Keil RTX5, FreeRTOS)
 
 #if !defined(MG_ARCH)
@@ -868,16 +868,16 @@ void mg_log_set_fn(mg_pfn_t fn, void *param);
 #define MG_VERBOSE(args) MG_LOG(MG_LL_VERBOSE, args)
 
 struct mg_timer {
-  unsigned long id;        // Timer ID
-  uint64_t period_ms;      // Timer period in milliseconds
-  uint64_t expire;         // Expiration timestamp in milliseconds
-  unsigned flags;          // Possible flags values below
-#define MG_TIMER_ONCE 0    // Call function once
-#define MG_TIMER_REPEAT 1  // Call function periodically
+  unsigned long id;     // Timer ID
+  uint64_t period_ms;   // Timer period in milliseconds
+  uint64_t expire;      // Expiration timestamp in milliseconds
+  unsigned flags;       // Possible flags values below
+#define MG_TIMER_ONCE 0 // Call function once
+#define MG_TIMER_REPEAT 1 // Call function periodically
 #define MG_TIMER_RUN_NOW 2 // Call immediately when timer is set
-  void (*fn)(void *);      // Function to call
-  void *arg;               // Function argument
-  struct mg_timer *next;   // Linkage
+  void (*fn)(void *);    // Function to call
+  void *arg;             // Function argument
+  struct mg_timer *next; // Linkage
 };
 
 void mg_timer_init(struct mg_timer **head, struct mg_timer *timer, uint64_t milliseconds,
@@ -1486,18 +1486,18 @@ struct mg_tcpip_if {
   struct mg_queue recv_queue;     // Receive queue
 
   // Internal state, user can use it but should not change it
-  uint8_t gwmac[6];            // Router's MAC
-  uint64_t now;                // Current time
-  uint64_t timer_1000ms;       // 1000 ms timer: for DHCP and link state
-  uint64_t lease_expire;       // Lease expiration time
-  uint16_t eport;              // Next ephemeral port
-  volatile uint32_t ndrop;     // Number of received, but dropped frames
-  volatile uint32_t nrecv;     // Number of received frames
-  volatile uint32_t nsent;     // Number of transmitted frames
-  volatile uint32_t nerr;      // Number of driver errors
-  uint8_t state;               // Current state
-#define MG_TCPIP_STATE_DOWN 0  // Interface is down
-#define MG_TCPIP_STATE_UP 1    // Interface is up
+  uint8_t gwmac[6];        // Router's MAC
+  uint64_t now;            // Current time
+  uint64_t timer_1000ms;   // 1000 ms timer: for DHCP and link state
+  uint64_t lease_expire;   // Lease expiration time
+  uint16_t eport;          // Next ephemeral port
+  volatile uint32_t ndrop; // Number of received, but dropped frames
+  volatile uint32_t nrecv; // Number of received frames
+  volatile uint32_t nsent; // Number of transmitted frames
+  volatile uint32_t nerr;  // Number of driver errors
+  uint8_t state;           // Current state
+#define MG_TCPIP_STATE_DOWN 0 // Interface is down
+#define MG_TCPIP_STATE_UP 1 // Interface is up
 #define MG_TCPIP_STATE_READY 2 // Interface is up and has IP
 };
 

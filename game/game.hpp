@@ -13,7 +13,7 @@ enum GameState { WhiteCheck, WhiteMate, BlackCheck, BlackMate };
 
 class Game {
 public:
-  MoveValidity validateMove(ChessMove *move);
+  MoveValidity validateMove(ChessMove *move) const;
   void makeMove(ChessMove *move);
   void undoMove();
   Cell *getBoard();

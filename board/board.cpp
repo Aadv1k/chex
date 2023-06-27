@@ -121,7 +121,21 @@ Board::~Board() {
   }
 }
 
-MoveValidity Board::validateMove(ChessMove *move) {
+bool Board::isMoveWithinBounds(ChessMove *move) const {
+  const int fromX = move->from.x, fromY = move->from.y;
+  const int toX = move->to.x, toY = move->to.y;
+  const int size = BOARD_SIZE;
+
+  if (fromX < 0 || fromX >= size || fromY < 0 || fromY >= size)
+    return false;
+
+  if (toX < 0 || toX >= size || toY < 0 || toY >= size)
+    return false;
+
+  return true;
+}
+
+MoveValidity Board::validateMove(ChessMove *move) const {
   const int fromX = move->from.x, fromY = move->from.y;
 
   if (!isMoveWithinBounds(move)) {
@@ -161,24 +175,23 @@ MoveValidity Board::validateMove(ChessMove *move) {
 }
 
 void Board::makeMove(ChessMove *move) {
-
   if (!isMoveWithinBounds(move)) {
-    assert(0 && "MOVE out of bounds");
+    assert(0 && "Move out of bounds");
   }
 
   auto fromLocation = board[move->from.y][move->from.x];
   auto toLocation = board[move->to.y][move->to.x];
 
   if (fromLocation.state == CellState::EMPTY) {
-    assert(0 && "TODO: EMPTY location");
+    assert(0 && "From target empty");
   }
 
   if (fromLocation.piece->color != currentPlayer) {
-    assert(0 && "TODO: handle wrong player making the move");
+    assert(0 && "Wrong player making the move");
   }
 
   if (MoveValidity::LegalMove != validateMove(move)) {
-    assert(0 && "TODO: handle the NON legal move");
+    assert(0 && "Handle the NON legal move");
   }
 
   if (toLocation.state == CellState::FILLED) {
@@ -218,20 +231,6 @@ void Board::undoMove() {
   capturedStack.pop();
 }
 
-bool Board::isMoveWithinBounds(ChessMove *move) {
-  const int fromX = move->from.x, fromY = move->from.y;
-  const int toX = move->to.x, toY = move->to.y;
-  const int size = BOARD_SIZE;
-
-  if (fromX < 0 || fromX >= size || fromY < 0 || fromY >= size)
-    return false;
-
-  if (toX < 0 || toX >= size || toY < 0 || toY >= size)
-    return false;
-
-  return true;
-}
-
 void Board::setCellToCell(Vec2i from, Vec2i to) {
   board[to.y][to.x] = board[from.y][from.x];
 
@@ -239,7 +238,7 @@ void Board::setCellToCell(Vec2i from, Vec2i to) {
   board[from.y][from.x].piece = nullptr;
 }
 
-MoveValidity Board::isPawnMoveValid(ChessMove *move) {
+MoveValidity Board::isPawnMoveValid(ChessMove *move) const {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
@@ -262,7 +261,7 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
       return MoveValidity::IllegalMove;
     break;
   case PieceColor::GREY:
-    assert(0 && "TODO: handle GREY piece in isPawnMoveValid");
+    assert(0 && "This should not happen");
     break;
   }
 
@@ -272,8 +271,7 @@ MoveValidity Board::isPawnMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-// TODO: test rook move validity checker
-MoveValidity Board::isRookMoveValid(ChessMove *move) {
+MoveValidity Board::isRookMoveValid(ChessMove *move) const {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
@@ -301,8 +299,7 @@ MoveValidity Board::isRookMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-// TODO: test knight move validity checker
-MoveValidity Board::isKnightMoveValid(ChessMove *move) {
+MoveValidity Board::isKnightMoveValid(ChessMove *move) const {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
@@ -323,8 +320,7 @@ MoveValidity Board::isKnightMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-// TODO: test bishop move validity checker
-MoveValidity Board::isBishopMoveValid(ChessMove *move) {
+MoveValidity Board::isBishopMoveValid(ChessMove *move) const {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
@@ -358,7 +354,7 @@ MoveValidity Board::isBishopMoveValid(ChessMove *move) {
   return MoveValidity::LegalMove;
 }
 
-MoveValidity Board::isQueenMoveValid(ChessMove *move) {
+MoveValidity Board::isQueenMoveValid(ChessMove *move) const {
 
   const MoveValidity pawnMove = isPawnMoveValid(move);
   const MoveValidity rookMove = isRookMoveValid(move);
@@ -371,7 +367,7 @@ MoveValidity Board::isQueenMoveValid(ChessMove *move) {
   return MoveValidity::IllegalMove;
 }
 
-MoveValidity Board::isKingMoveValid(ChessMove *move) {
+MoveValidity Board::isKingMoveValid(ChessMove *move) const {
   const int fromX = move->from.x, fromY = move->from.y;
   const int toX = move->to.x, toY = move->to.y;
 
