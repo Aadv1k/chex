@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stack>
 #include <string>
+#include <array>
 
 static constexpr int BOARD_SIZE = 8;
 
@@ -41,7 +42,7 @@ struct Cell {
 
 class Board {
 public:
-  Cell board[BOARD_SIZE][BOARD_SIZE];
+  std::array<std::array<Cell, BOARD_SIZE>, BOARD_SIZE> board;
 
   Board();
   ~Board();
