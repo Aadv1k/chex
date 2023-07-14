@@ -14,9 +14,8 @@ head on over to the [releases](https://github.com/aadv1k/chex/releases/latest) a
 
 ### Usage
 
-```shell
+```console
 $ chex help
-
 Usage:
         ./bin/chex web --port 8000
         ./bin/chex console
@@ -32,14 +31,14 @@ Options:
 
 We use [make](https://www.gnu.org/software/make/) to build the source
 
-```
+```console
 make chex
 make clean
 ```
 
 ### Test
 
-```shell
+```console
 make chex/tests
 ./bin/chex.test
 ```
