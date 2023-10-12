@@ -6,6 +6,7 @@ The homegrown cross-platform chess game/engine in C++
   - [Usage](#usage)
   - [Build](#build)
   - [Test](#test)
+- [Screenshots](#screenshots)
 - [The engine](#the-engine)
 
 ## Quickstart
@@ -43,8 +44,26 @@ make chex/tests
 ./bin/chex.test
 ```
 
+## Screenshots
 
-## The engine
+### Chex::WebUI
+
+<img src="./docs/chex-web.png" alt="A chess game being played on the browser" style="display: block;" width="500">
+
+### Chex::ConsoleUI
+
+Play a chess game on the console
+
+```
+-----------------------------------------------------
+           Welcome to Chex::ConsoleUI!
+-----------------------------------------------------
+Type 'help' to see the list of available commands.
+
+white's turn>
+```
+
+## The Engine
 
 The engine is aimed to be **modular**, hence here there is a clear separation between the UI and the engine itself. You can use the engine in your code if you wish to implement a different UI, for which you can refer to:
 
